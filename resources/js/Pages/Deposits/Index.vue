@@ -18,15 +18,16 @@ const uploading = ref(null);
 
 const uploadForm = useForm({ proof: null });
 
+function isPending(deposit) {
+    return deposit.needs_payment || deposit.needs_upload;
+}
+
 function statusVariant(deposit) {
-    if (deposit.status === 'INITIATED ONLINE PAYMENT' || deposit.status === 'AWAITING PROOF OF PAYMENT') return 'gray';
-    return 'good';
+    return isPending(deposit) ? 'gray' : 'good';
 }
 
 function rowClass(deposit) {
-    return deposit.status === 'INITIATED ONLINE PAYMENT' || deposit.status === 'AWAITING PROOF OF PAYMENT'
-        ? 'bg-gray-50/60 dark:bg-gray-900/30'
-        : 'bg-status-good/5';
+    return isPending(deposit) ? 'bg-gray-50/60 dark:bg-gray-900/30' : 'bg-status-good/5';
 }
 
 function pay(deposit) {
@@ -88,8 +89,8 @@ function peso(value) {
                                 <td class="px-5 py-3">
                                     <div class="flex flex-wrap gap-2">
                                         <Button size="sm" variant="ghost" @click="viewing = deposit">View</Button>
-                                        <Button v-if="deposit.status === 'INITIATED ONLINE PAYMENT'" size="sm" variant="primary" @click="pay(deposit)">Pay</Button>
-                                        <Button v-if="deposit.status === 'AWAITING PROOF OF PAYMENT'" size="sm" variant="outline" @click="uploading = deposit">Upload</Button>
+                                        <Button v-if="deposit.needs_payment" size="sm" variant="primary" @click="pay(deposit)">Pay</Button>
+                                        <Button v-if="deposit.needs_upload" size="sm" variant="outline" @click="uploading = deposit">Upload</Button>
                                     </div>
                                 </td>
                             </tr>

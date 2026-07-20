@@ -12,11 +12,14 @@ import PolicyholderTable from '@/Components/MotorInsurance/PolicyholderTable.vue
 import AddPersonModal from '@/Components/MotorInsurance/AddPersonModal.vue';
 import AddOrganizationModal from '@/Components/MotorInsurance/AddOrganizationModal.vue';
 import AddLenderModal from '@/Components/MotorInsurance/AddLenderModal.vue';
-import { colors } from '@/Data/colorData';
 
 const props = defineProps({
     quote: Object,
     wallet: Object,
+    colors: {
+        type: Array,
+        default: () => [],
+    },
 });
 
 function peso(value) {
@@ -99,9 +102,11 @@ function authenticate() {
                         v-model="detailsForm.color"
                         label="Color"
                         required
+                        creatable
+                        entry-label="color"
                         :error="detailsForm.errors.color"
                         :options="colors"
-                        placeholder="Search color..."
+                        placeholder="Type or select a color..."
                     />
                     <Input id="other_info" v-model="detailsForm.other_info" label="Other Info" :error="detailsForm.errors.other_info" />
                 </div>

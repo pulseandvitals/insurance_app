@@ -34,7 +34,7 @@ const greeting = computed(() => {
             <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-primary-600 text-xs font-bold text-white">FG</span>
         </Link>
 
-        <h1 class="truncate text-base font-semibold text-gray-900 dark:text-gray-100 sm:text-lg">FGIC Producers' Portal</h1>
+        <h1 class="truncate text-base font-semibold text-gray-900 dark:text-gray-100 sm:text-lg">SICI Producers' Portal</h1>
 
         <div class="ml-auto flex items-center gap-1">
             <ThemeToggle />

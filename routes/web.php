@@ -69,7 +69,9 @@ Route::middleware(['auth', 'verified', 'producer'])->group(function () {
     // Policy contract detail
     Route::get('/policies/{policy}', [PolicyController::class, 'show'])->name('policies.show');
     Route::get('/policies/{policy}/download', [PolicyController::class, 'download'])->name('policies.download');
-    Route::get('/policies/{policy}/print/{mode}', [PolicyController::class, 'print'])->name('policies.print');
+    Route::get('/policies/{policy}/print/{mode}', [PolicyController::class, 'print'])
+        ->where('mode', 'schedule|coc|cov|premium-statement|jacket')
+        ->name('policies.print');
 });
 
 require __DIR__.'/auth.php';

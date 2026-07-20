@@ -2,121 +2,86 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\MotorQuote\MotorQuoteRequest;
+use App\Http\Requests\MotorQuote\OcrStoreRequest;
+use App\Http\Requests\MotorQuote\PreFlightStoreRequest;
+use App\Http\Requests\MotorQuote\QuotationsIndexRequest;
+use App\Http\Requests\MotorQuote\StoreMotorQuoteRequest;
+use App\Http\Resources\MotorQuoteResource;
+use App\Http\Resources\ProducerResource;
+use App\Http\Resources\WalletResource;
 use App\Models\MotorQuote;
 use App\Models\Policy;
 use App\Models\WalletTransaction;
 use App\Services\CtplPremiumCalculator;
+use App\Services\VehicleCatalogService;
+use Carbon\Carbon;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
-use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Inertia\Response;
 
 class MotorQuoteController extends Controller
 {
-    /** Vehicle class + coverage-period combinations with no prepaid setup on file (demo constraint). */
-    private const NO_PREPAID_SETUP = [
-        ['LTO Public Utility Bus', 3],
-    ];
+    public function __construct(
+        private readonly CtplPremiumCalculator $calculator,
+        private readonly VehicleCatalogService $vehicleCatalog,
+    ) {}
 
-    public function __construct(private readonly CtplPremiumCalculator $calculator) {}
-
-    public function index(Request $request): Response
+    public function index(QuotationsIndexRequest $request): Response
     {
         $producer = $request->user()->producer;
 
         $quotes = $producer->motorQuotes()
-            ->when($request->filled('plate_no'), fn ($q) => $q->where('plate_no', 'like', '%'.$request->input('plate_no').'%'))
-            ->when($request->filled('quote_ref'), fn ($q) => $q->where('quote_ref', 'like', '%'.$request->input('quote_ref').'%'))
+            ->when($request->filled('plate_no'), fn ($q) => $q->where('plate_no', 'like', '%'.$request->validated('plate_no').'%'))
+            ->when($request->filled('quote_ref'), fn ($q) => $q->where('quote_ref', 'like', '%'.$request->validated('quote_ref').'%'))
             ->latest()
             ->with('policy')
             ->get();
 
         return Inertia::render('MotorInsurance/Quotations', [
-            'quotes' => $quotes,
-            'filters' => $request->only(['transaction_type', 'plate_no', 'quote_ref']),
+            'quotes' => MotorQuoteResource::collection($quotes),
+            'filters' => $request->validated(),
         ]);
     }
 
     public function create(Request $request): Response
     {
         return Inertia::render('MotorInsurance/Retail/Step1', [
-            'wallet' => $request->user()->producer->wallet,
+            'wallet' => new WalletResource($request->user()->producer->wallet),
             'prefill' => $request->session()->pull('ocr_prefill'),
+            'catalog' => $this->vehicleCatalog->tree(),
         ]);
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(StoreMotorQuoteRequest $request): RedirectResponse
     {
-        $data = $request->validate([
-            'lto_registration_type' => ['required', 'in:New,Renewal'],
-            'vehicle_class' => ['required', 'in:Private,Motorcycles,Commercial-Trucks,LTO Tricycle,LTO Taxi,LTO Public Utility Jeepney,LTO Public Utility Bus'],
-            'coverage_period' => ['required', 'in:1,3'],
-            'surplus_vehicle' => ['required', 'boolean'],
-            'year_model' => ['required', 'integer', 'min:1965', 'max:2027'],
-            'brand' => ['required', 'string', 'max:100'],
-            'model' => ['required', 'string', 'max:100'],
-            'variant' => ['required', 'string', 'max:100'],
-            'plate_no' => ['required', 'string', 'max:20'],
-        ]);
-
-        $currentYear = (int) now()->format('Y');
-
-        if ($data['lto_registration_type'] === 'New' && ! $data['surplus_vehicle'] && (int) $data['coverage_period'] === 1) {
-            throw ValidationException::withMessages([
-                'coverage_period' => "A 1-year CTPL term for 'New' registration type is only allowed for Surplus vehicles. Please select the 3-Year coverage period, or mark this as a Surplus Vehicle.",
-            ]);
-        }
-
-        if ($data['year_model'] >= $currentYear && $data['lto_registration_type'] !== 'New') {
-            throw ValidationException::withMessages([
-                'lto_registration_type' => "Vehicles with year model {$data['year_model']} or later must use Registration Type: New.",
-            ]);
-        }
-
-        foreach (self::NO_PREPAID_SETUP as [$class, $term]) {
-            if ($data['vehicle_class'] === $class && (int) $data['coverage_period'] === $term) {
-                throw ValidationException::withMessages([
-                    'vehicle_class' => "No Prepaid setup for this producer for subline: {$class}, term: {$term} year/s.",
-                ]);
-            }
-        }
-
+        $data = $request->validated();
         $premium = $this->calculator->calculate($data['vehicle_class'], (int) $data['coverage_period']);
+
+        $this->vehicleCatalog->register($data['vehicle_class'], $data['brand'], $data['model'], $data['variant']);
 
         $quote = $request->user()->producer->motorQuotes()->create([
             'quote_ref' => 'QR-'.strtoupper(Str::random(10)),
             'status' => MotorQuote::STATUS_QUOTE,
-            'lto_registration_type' => $data['lto_registration_type'],
-            'vehicle_class' => $data['vehicle_class'],
-            'coverage_period' => $data['coverage_period'],
-            'surplus_vehicle' => $data['surplus_vehicle'],
-            'year_model' => $data['year_model'],
-            'brand' => $data['brand'],
-            'model' => $data['model'],
-            'variant' => $data['variant'],
-            'plate_no' => $data['plate_no'],
+            ...$data,
             ...$premium,
         ]);
 
         return redirect()->route('motor-risks.show', $quote);
     }
 
-    public function show(Request $request, MotorQuote $motorQuote): Response
+    public function show(MotorQuoteRequest $request, MotorQuote $motorQuote): Response
     {
-        $this->authorizeQuote($request, $motorQuote);
-
         return Inertia::render('MotorInsurance/Retail/Quote', [
-            'quote' => $motorQuote,
-            'producer' => $motorQuote->producer,
+            'quote' => new MotorQuoteResource($motorQuote),
+            'producer' => new ProducerResource($motorQuote->producer),
         ]);
     }
 
-    public function proceed(Request $request, MotorQuote $motorQuote): RedirectResponse
+    public function proceed(MotorQuoteRequest $request, MotorQuote $motorQuote): RedirectResponse
     {
-        $this->authorizeQuote($request, $motorQuote);
-
         if ($motorQuote->status === MotorQuote::STATUS_QUOTE) {
             $motorQuote->update(['status' => MotorQuote::STATUS_PRE_FLIGHT]);
         }
@@ -124,30 +89,22 @@ class MotorQuoteController extends Controller
         return redirect()->route('motor-risks.pre-flight', $motorQuote);
     }
 
-    public function preFlight(Request $request, MotorQuote $motorQuote): Response
+    public function preFlight(MotorQuoteRequest $request, MotorQuote $motorQuote): Response
     {
-        $this->authorizeQuote($request, $motorQuote);
-
         return Inertia::render('MotorInsurance/Retail/PreFlight', [
-            'quote' => $motorQuote->load('policyholders'),
-            'wallet' => $motorQuote->producer->wallet,
+            'quote' => new MotorQuoteResource($motorQuote->load('policyholders')),
+            'wallet' => new WalletResource($motorQuote->producer->wallet),
+            'colors' => $this->vehicleCatalog->colors(),
         ]);
     }
 
-    public function preFlightStore(Request $request, MotorQuote $motorQuote): RedirectResponse
+    public function preFlightStore(PreFlightStoreRequest $request, MotorQuote $motorQuote): RedirectResponse
     {
-        $this->authorizeQuote($request, $motorQuote);
+        $data = $request->validated();
 
-        $data = $request->validate([
-            'chassis_no' => ['required', 'string', 'max:30'],
-            'motor_no' => ['required', 'string', 'max:30'],
-            'mv_file_no' => ['required', 'string', 'max:30'],
-            'color' => ['required', 'string', 'max:60'],
-            'other_info' => ['nullable', 'string', 'max:255'],
-            'inception_date' => ['required', 'date'],
-        ]);
+        $this->vehicleCatalog->registerColor($data['color']);
 
-        $inception = \Carbon\Carbon::parse($data['inception_date']);
+        $inception = Carbon::parse($data['inception_date']);
         $expiry = $inception->copy()->addYears($motorQuote->coverage_period);
 
         $motorQuote->update([
@@ -158,10 +115,8 @@ class MotorQuoteController extends Controller
         return back()->with('success', 'Vehicle and inception date details saved.');
     }
 
-    public function authenticateLto(Request $request, MotorQuote $motorQuote): RedirectResponse
+    public function authenticateLto(MotorQuoteRequest $request, MotorQuote $motorQuote): RedirectResponse
     {
-        $this->authorizeQuote($request, $motorQuote);
-
         if (! $motorQuote->color || ! $motorQuote->chassis_no || ! $motorQuote->mv_file_no) {
             return back()->with('error', 'Please complete the vehicle details (Color, Chassis/Serial No., MV File No.) before authenticating with LTO.');
         }
@@ -190,25 +145,21 @@ class MotorQuoteController extends Controller
         return redirect()->route('motor-risks.checkout', $motorQuote)->with('success', 'LTO authentication successful.');
     }
 
-    public function checkout(Request $request, MotorQuote $motorQuote): Response|RedirectResponse
+    public function checkout(MotorQuoteRequest $request, MotorQuote $motorQuote): Response|RedirectResponse
     {
-        $this->authorizeQuote($request, $motorQuote);
-
         if ($motorQuote->lto_status !== 'verified') {
             return redirect()->route('motor-risks.pre-flight', $motorQuote)
                 ->with('error', 'Please complete LTO authentication before proceeding to payment.');
         }
 
         return Inertia::render('MotorInsurance/Retail/Checkout', [
-            'quote' => $motorQuote,
-            'wallet' => $motorQuote->producer->wallet,
+            'quote' => new MotorQuoteResource($motorQuote),
+            'wallet' => new WalletResource($motorQuote->producer->wallet),
         ]);
     }
 
-    public function checkoutStore(Request $request, MotorQuote $motorQuote): RedirectResponse
+    public function checkoutStore(MotorQuoteRequest $request, MotorQuote $motorQuote): RedirectResponse
     {
-        $this->authorizeQuote($request, $motorQuote);
-
         abort_unless($motorQuote->lto_status === 'verified', 422);
 
         $wallet = $motorQuote->producer->wallet;
@@ -251,18 +202,12 @@ class MotorQuoteController extends Controller
     public function ocr(Request $request): Response
     {
         return Inertia::render('MotorInsurance/Ocr', [
-            'wallet' => $request->user()->producer->wallet,
+            'wallet' => new WalletResource($request->user()->producer->wallet),
         ]);
     }
 
-    public function ocrStore(Request $request): RedirectResponse
+    public function ocrStore(OcrStoreRequest $request): RedirectResponse
     {
-        $request->validate([
-            'document_type' => ['required', 'in:Certificate of Registration (CR)'],
-            'image' => ['required', 'file', 'mimes:jpg,jpeg,png,pdf', 'max:8192'],
-            'consent' => ['accepted'],
-        ]);
-
         // Simulated OCR extraction result — a real integration would call a vision/OCR service here.
         $extracted = [
             'lto_registration_type' => 'Renewal',
@@ -277,10 +222,5 @@ class MotorQuoteController extends Controller
         return redirect()->route('motor-risks.create')
             ->with('success', 'Document scanned successfully. Vehicle details were extracted and pre-filled below — please review before creating the quote.')
             ->with('ocr_prefill', $extracted);
-    }
-
-    private function authorizeQuote(Request $request, MotorQuote $motorQuote): void
-    {
-        abort_unless($request->user()->producer?->id === $motorQuote->producer_id, 403);
     }
 }

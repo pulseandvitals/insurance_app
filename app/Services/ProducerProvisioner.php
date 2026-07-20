@@ -26,7 +26,7 @@ class ProducerProvisioner
 
         $producer = Producer::create([
             'user_id' => $user->id,
-            'code' => 'FGIC-'.str_pad((string) $user->id, 6, '0', STR_PAD_LEFT),
+            'code' => 'SICI-'.str_pad((string) $user->id, 6, '0', STR_PAD_LEFT),
             'first_name' => $firstName,
             'middle_name' => null,
             'last_name' => $lastName,
@@ -89,7 +89,7 @@ class ProducerProvisioner
 
         WalletTransaction::create([
             'wallet_id' => $wallet->id,
-            'from_handle' => 'FGIC Treasury',
+            'from_handle' => 'SICI Treasury',
             'to_handle' => $producer->wallet_handle,
             'transaction_type' => WalletTransaction::TYPE_DEPOSIT,
             'reference_label' => 'Deposit UUID: '.$confirmed->ref_no,

@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Deposit\DepositOwnershipRequest;
+use App\Http\Requests\Deposit\UploadProofRequest;
+use App\Http\Resources\DepositResource;
 use App\Models\Deposit;
 use App\Models\WalletTransaction;
 use Illuminate\Http\RedirectResponse;
@@ -18,15 +21,13 @@ class DepositController extends Controller
         $deposits = $producer->deposits()->latest()->get();
 
         return Inertia::render('Deposits/Index', [
-            'deposits' => $deposits,
+            'deposits' => DepositResource::collection($deposits),
             'walletHandle' => $producer->wallet_handle,
         ]);
     }
 
-    public function pay(Request $request, Deposit $deposit): RedirectResponse
+    public function pay(DepositOwnershipRequest $request, Deposit $deposit): RedirectResponse
     {
-        $this->authorizeDeposit($request, $deposit);
-
         abort_unless($deposit->needsPayment(), 422);
 
         $deposit->update([
@@ -40,15 +41,9 @@ class DepositController extends Controller
         return back()->with('success', "Payment for deposit {$deposit->ref_no} confirmed. Your e-wallet has been credited.");
     }
 
-    public function upload(Request $request, Deposit $deposit): RedirectResponse
+    public function upload(UploadProofRequest $request, Deposit $deposit): RedirectResponse
     {
-        $this->authorizeDeposit($request, $deposit);
-
         abort_unless($deposit->needsUpload(), 422);
-
-        $request->validate([
-            'proof' => ['required', 'file', 'mimes:jpg,jpeg,png,pdf', 'max:5120'],
-        ]);
 
         $path = $request->file('proof')->store('deposit-proofs', 'local');
 
@@ -74,7 +69,7 @@ class DepositController extends Controller
 
         WalletTransaction::create([
             'wallet_id' => $wallet->id,
-            'from_handle' => 'FGIC Treasury',
+            'from_handle' => 'SICI Treasury',
             'to_handle' => $deposit->producer->wallet_handle,
             'transaction_type' => WalletTransaction::TYPE_DEPOSIT,
             'reference_label' => 'Deposit UUID: '.$deposit->ref_no,
@@ -82,10 +77,5 @@ class DepositController extends Controller
             'debit' => 0,
             'credit' => $deposit->amount,
         ]);
-    }
-
-    private function authorizeDeposit(Request $request, Deposit $deposit): void
-    {
-        abort_unless($request->user()->producer?->id === $deposit->producer_id, 403);
     }
 }

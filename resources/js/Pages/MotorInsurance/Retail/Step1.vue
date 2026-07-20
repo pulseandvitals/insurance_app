@@ -6,14 +6,19 @@ import Card from '@/Components/UI/Card.vue';
 import Button from '@/Components/UI/Button.vue';
 import Select from '@/Components/UI/Select.vue';
 import Input from '@/Components/UI/Input.vue';
+import SearchableSelect from '@/Components/UI/SearchableSelect.vue';
 import Banner from '@/Components/UI/Banner.vue';
 import WalletBanner from '@/Components/MotorInsurance/WalletBanner.vue';
 import WizardSteps from '@/Components/MotorInsurance/WizardSteps.vue';
-import { vehicleClasses, yearModels, brandsFor, modelsFor, variantsFor } from '@/Data/vehicleCatalog';
+import { vehicleClasses, yearModels } from '@/Data/vehicleCatalog';
 
 const props = defineProps({
     wallet: Object,
     prefill: Object,
+    catalog: {
+        type: Object,
+        default: () => ({}),
+    },
 });
 
 const currentYear = new Date().getFullYear();
@@ -35,9 +40,19 @@ watch(() => form.vehicle_class, () => { form.brand = ''; form.model = ''; form.v
 watch(() => form.brand, () => { form.model = ''; form.variant = ''; });
 watch(() => form.model, () => { form.variant = ''; });
 
-const brandOptions = computed(() => brandsFor(form.vehicle_class));
-const modelOptions = computed(() => modelsFor(form.vehicle_class, form.brand));
-const variantOptions = computed(() => variantsFor(form.vehicle_class, form.brand, form.model));
+function findByName(list, name) {
+    const needle = (name ?? '').trim().toLowerCase();
+    return needle ? list.find((item) => item.name.toLowerCase() === needle) : undefined;
+}
+
+const brandsForClass = computed(() => props.catalog[form.vehicle_class] ?? []);
+const brandOptions = computed(() => brandsForClass.value.map((b) => b.name));
+
+const currentBrand = computed(() => findByName(brandsForClass.value, form.brand));
+const modelOptions = computed(() => currentBrand.value?.models.map((m) => m.name) ?? []);
+
+const currentModel = computed(() => findByName(currentBrand.value?.models ?? [], form.model));
+const variantOptions = computed(() => currentModel.value?.variants.map((v) => v.name) ?? []);
 
 const oneYearBlockedForNew = computed(
     () => form.lto_registration_type === 'New' && !form.surplus_vehicle && form.coverage_period === '1',
@@ -117,34 +132,48 @@ function submit() {
                             :error="form.errors.year_model"
                             :options="yearModels"
                         />
-                        <Select
+                        <SearchableSelect
                             id="brand"
                             v-model="form.brand"
                             label="Brand (Make)"
                             required
+                            creatable
+                            entry-label="brand"
+                            placeholder="Type or select a brand..."
                             :error="form.errors.brand"
                             :disabled="!form.vehicle_class"
                             :options="brandOptions"
                         />
-                        <Select
+                        <SearchableSelect
                             id="model"
                             v-model="form.model"
                             label="Model (Type)"
                             required
+                            creatable
+                            entry-label="model"
+                            placeholder="Type or select a model..."
                             :error="form.errors.model"
                             :disabled="!form.brand"
                             :options="modelOptions"
                         />
-                        <Select
+                        <SearchableSelect
                             id="variant"
                             v-model="form.variant"
                             label="Variant (Trim)"
                             required
+                            creatable
+                            entry-label="variant"
+                            placeholder="Type or select a variant..."
                             :error="form.errors.variant"
                             :disabled="!form.model"
                             :options="variantOptions"
                         />
                     </div>
+
+                    <p class="text-xs text-gray-400">
+                        Don't see your vehicle's Brand, Model, or Variant? Just type it — it'll be saved and available
+                        to select the next time you or another producer processes the same vehicle.
+                    </p>
 
                     <Input
                         id="plate_no"

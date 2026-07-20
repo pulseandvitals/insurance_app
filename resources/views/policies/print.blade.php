@@ -32,7 +32,7 @@
     <div class="letterhead">
         <div>
             <h1>Fortune General Insurance Corp.</h1>
-            <p>InsurApp — FGIC Producers' Portal</p>
+            <p>InsurApp — SICI Producers' Portal</p>
             <p>Posted to Genweb: {{ $policy->genweb_code }}</p>
         </div>
         <div class="doc-title">

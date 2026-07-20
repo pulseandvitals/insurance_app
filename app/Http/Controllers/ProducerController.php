@@ -2,21 +2,21 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Producer\DashboardFilterRequest;
+use App\Http\Requests\Producer\ProducerRequest;
+use App\Http\Requests\Producer\UpdateProducerRequest;
+use App\Http\Resources\ProducerResource;
 use App\Models\MotorQuote;
 use App\Models\Producer;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 use Inertia\Response;
 
 class ProducerController extends Controller
 {
-    public function dashboard(Request $request, Producer $producer): Response
+    public function dashboard(DashboardFilterRequest $request, Producer $producer): Response
     {
-        $this->authorizeProducer($request, $producer);
-
         $dateFrom = $request->date('date_from');
         $dateTo = $request->date('date_to');
 
@@ -33,11 +33,8 @@ class ProducerController extends Controller
         $policiesTotal = (clone $policies)->sum('total_premium');
 
         return Inertia::render('Producers/Dashboard', [
-            'producer' => $producer,
-            'filters' => [
-                'date_from' => $request->input('date_from'),
-                'date_to' => $request->input('date_to'),
-            ],
+            'producer' => new ProducerResource($producer),
+            'filters' => $request->only(['date_from', 'date_to']),
             'stats' => [
                 'quotations_count' => $quotationsCount,
                 'quotations_total' => (float) $quotationsTotal,
@@ -47,33 +44,19 @@ class ProducerController extends Controller
         ]);
     }
 
-    public function edit(Request $request, Producer $producer): Response
+    public function edit(ProducerRequest $request, Producer $producer): Response
     {
-        $this->authorizeProducer($request, $producer);
-
         return Inertia::render('Producers/Account', [
-            'producer' => $producer,
+            'producer' => new ProducerResource($producer),
         ]);
     }
 
-    public function update(Request $request, Producer $producer): RedirectResponse
+    public function update(UpdateProducerRequest $request, Producer $producer): RedirectResponse
     {
-        $this->authorizeProducer($request, $producer);
-
-        $data = $request->validate([
-            'password' => ['nullable', 'confirmed', 'min:8'],
-            'consent' => ['accepted'],
-        ]);
-
-        if (! empty($data['password'])) {
-            $producer->user->update(['password' => Hash::make($data['password'])]);
+        if ($password = $request->validated('password')) {
+            $producer->user->update(['password' => Hash::make($password)]);
         }
 
         return back()->with('success', 'Your account changes have been saved.');
-    }
-
-    private function authorizeProducer(Request $request, Producer $producer): void
-    {
-        abort_unless($request->user()->producer?->id === $producer->id, 403);
     }
 }
