@@ -68,7 +68,7 @@ function submit() {
                 <label class="flex items-start gap-2 text-sm text-gray-600 dark:text-gray-300">
                     <Checkbox v-model:checked="form.consent" class="mt-0.5" />
                     I consent to the collection, use, and processing of my personal data in accordance with the Data
-                    Privacy Act of 2012 (RA 10173) and Fortune General Insurance Corp.'s
+                    Privacy Act of 2012 (RA 10173) and Stronghold's
                     <a href="#" class="font-medium text-primary-600 hover:underline">Privacy Policy</a>.
                 </label>
             </Card>

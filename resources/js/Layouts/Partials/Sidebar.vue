@@ -153,7 +153,7 @@ Object.entries(dropdowns.value).forEach(([key, dropdown]) => {
 
         <div class="shrink-0 border-t border-gray-200 p-4 dark:border-gray-700">
             <p class="text-[11px] leading-relaxed text-gray-400 dark:text-gray-500">
-                Copyright &copy; 2018-{{ new Date().getFullYear() }} Fortune General Insurance Corp. All rights reserved.
+                Copyright &copy; 2018-{{ new Date().getFullYear() }} Stronghold. All rights reserved.
             </p>
         </div>
     </aside>

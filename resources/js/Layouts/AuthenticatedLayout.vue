@@ -1,13 +1,37 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 import { usePage } from '@inertiajs/vue3';
 import Sidebar from '@/Layouts/Partials/Sidebar.vue';
 import Navbar from '@/Layouts/Partials/Navbar.vue';
 import Footer from '@/Layouts/Partials/Footer.vue';
-import Banner from '@/Components/UI/Banner.vue';
+import ToastItem from '@/Components/UI/ToastItem.vue';
 
 const page = usePage();
 const sidebarOpen = ref(false);
+
+const toasts = ref([]);
+let toastSeq = 0;
+
+function pushToast(variant, message) {
+    if (!message) return;
+    const id = ++toastSeq;
+    const duration = variant === 'critical' ? 7000 : 5000;
+    toasts.value.push({ id, variant, message, duration });
+    setTimeout(() => dismissToast(id), duration);
+}
+
+function dismissToast(id) {
+    toasts.value = toasts.value.filter((toast) => toast.id !== id);
+}
+
+watch(
+    () => [page.props.flash?.success, page.props.flash?.error],
+    ([success, error]) => {
+        if (success) pushToast('good', success);
+        if (error) pushToast('critical', error);
+    },
+    { immediate: true },
+);
 </script>
 
 <template>
@@ -23,17 +47,45 @@ const sidebarOpen = ref(false);
             </div>
 
             <main class="flex-1 overflow-y-auto">
-                <div v-if="page.props.flash?.success" class="mx-4 mt-4 sm:mx-6 lg:mx-8">
-                    <Banner variant="good">{{ page.props.flash.success }}</Banner>
-                </div>
-                <div v-if="page.props.flash?.error" class="mx-4 mt-4 sm:mx-6 lg:mx-8">
-                    <Banner variant="critical">{{ page.props.flash.error }}</Banner>
-                </div>
-
                 <slot />
             </main>
 
             <Footer />
         </div>
+
+        <Teleport to="body">
+            <div class="pointer-events-none fixed inset-x-4 top-4 z-[100] flex flex-col items-stretch gap-3 sm:inset-x-auto sm:right-4 sm:w-96">
+                <TransitionGroup name="toast">
+                    <ToastItem
+                        v-for="toast in toasts"
+                        :key="toast.id"
+                        class="pointer-events-auto"
+                        :variant="toast.variant"
+                        :message="toast.message"
+                        :duration="toast.duration"
+                        @dismiss="dismissToast(toast.id)"
+                    />
+                </TransitionGroup>
+            </div>
+        </Teleport>
     </div>
 </template>
+
+<style scoped>
+.toast-enter-active,
+.toast-leave-active {
+    transition: all 0.25s ease;
+}
+.toast-enter-from {
+    opacity: 0;
+    transform: translateX(24px);
+}
+.toast-leave-to {
+    opacity: 0;
+    transform: translateX(24px) scale(0.96);
+}
+.toast-leave-active {
+    position: absolute;
+    width: 100%;
+}
+</style>

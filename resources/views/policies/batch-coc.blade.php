@@ -24,7 +24,7 @@
         <div class="page">
             <div class="letterhead">
                 <div>
-                    <h1>Fortune General Insurance Corp.</h1>
+                    <h1>Stronghold</h1>
                     <p>InsurApp — SICI Producers' Portal</p>
                     <p>Posted to Genweb: {{ $policy->genweb_code }}</p>
                 </div>

@@ -50,8 +50,13 @@ const showPerson = ref(false);
 const showOrganization = ref(false);
 const showLender = ref(false);
 
-function authenticate() {
-    router.post(route('motor-risks.authenticate-lto', props.quote.id));
+const proceeding = ref(false);
+
+function proceedToCheckout() {
+    proceeding.value = true;
+    router.post(route('motor-risks.authenticate-lto', props.quote.id), {}, {
+        onFinish: () => { proceeding.value = false; },
+    });
 }
 </script>
 
@@ -142,7 +147,7 @@ function authenticate() {
 
             <div class="flex items-center justify-between">
                 <Button variant="secondary" @click="router.get(route('motor-risks.show', quote.id))">Back</Button>
-                <Button @click="authenticate">Authenticate with LTO</Button>
+                <Button :disabled="proceeding" @click="proceedToCheckout">{{ proceeding ? 'Proceeding…' : 'Proceed to Checkout' }}</Button>
             </div>
         </div>
 

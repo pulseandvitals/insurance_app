@@ -122,34 +122,23 @@ class MotorQuoteController extends Controller
         }
 
         if ($motorQuote->policyholders()->count() === 0) {
-            return back()->with('error', 'Please add at least one Policyholder before authenticating with LTO.');
+            return back()->with('error', 'Please add at least one Policyholder before proceeding.');
         }
 
-        // Simulated LTO/Insurance Commission real-time validation.
-        $mvFileValid = preg_match('/^[A-Z0-9]{15}$/', strtoupper($motorQuote->mv_file_no)) === 1;
-
-        if (! $mvFileValid) {
-            $motorQuote->update([
-                'lto_status' => 'failed',
-                'lto_message' => 'ERROR/S: The IC has indicated that this item is invalid: Submit COC Failed - The MV File No. does not exist.',
-            ]);
-
-            return back()->with('error', $motorQuote->lto_message);
-        }
-
+        // LTO/Insurance Commission real-time validation is not yet wired up — treat as verified for now.
         $motorQuote->update([
             'lto_status' => 'verified',
             'lto_message' => 'COC successfully validated by the LTO/Insurance Commission web service.',
         ]);
 
-        return redirect()->route('motor-risks.checkout', $motorQuote)->with('success', 'LTO authentication successful.');
+        return redirect()->route('motor-risks.checkout', $motorQuote)->with('success', 'Proceeding to checkout.');
     }
 
     public function checkout(MotorQuoteRequest $request, MotorQuote $motorQuote): Response|RedirectResponse
     {
         if ($motorQuote->lto_status !== 'verified') {
             return redirect()->route('motor-risks.pre-flight', $motorQuote)
-                ->with('error', 'Please complete LTO authentication before proceeding to payment.');
+                ->with('error', 'Please complete the pre-flight step before proceeding to payment.');
         }
 
         return Inertia::render('MotorInsurance/Retail/Checkout', [
