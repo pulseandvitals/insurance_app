@@ -1,5 +1,6 @@
 <script setup>
 import { Head } from '@inertiajs/vue3';
+import { Printer, FileText, Download, ShieldCheck, BookText } from 'lucide-vue-next';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import Card from '@/Components/UI/Card.vue';
 import Badge from '@/Components/UI/Badge.vue';
@@ -63,8 +64,8 @@ const wordings = [
                 </div>
 
                 <div class="mt-4 flex gap-3">
-                    <Button variant="secondary" size="sm" @click="printMode('schedule')">Print Schedule</Button>
-                    <Button variant="secondary" size="sm" @click="printMode('premium-statement')">Premium Statement</Button>
+                    <Button variant="secondary" size="sm" @click="printMode('schedule')"><Printer class="h-3.5 w-3.5" />Print Schedule</Button>
+                    <Button variant="secondary" size="sm" @click="printMode('premium-statement')"><FileText class="h-3.5 w-3.5" />Premium Statement</Button>
                 </div>
             </Card>
 
@@ -80,9 +81,9 @@ const wordings = [
                 </div>
 
                 <div class="mt-4 flex flex-wrap gap-3">
-                    <Button variant="secondary" size="sm" @click="printMode('coc')">Print COC</Button>
-                    <a :href="route('policies.download', policy.id)"><Button variant="outline" size="sm">Download PDF</Button></a>
-                    <Button variant="secondary" size="sm" @click="printMode('cov')">Print COV</Button>
+                    <Button variant="secondary" size="sm" @click="printMode('coc')"><Printer class="h-3.5 w-3.5" />Print COC</Button>
+                    <a :href="route('policies.download', policy.id)"><Button variant="outline" size="sm"><Download class="h-3.5 w-3.5" />Download PDF</Button></a>
+                    <Button variant="secondary" size="sm" @click="printMode('cov')"><ShieldCheck class="h-3.5 w-3.5" />Print COV</Button>
                 </div>
             </Card>
 
@@ -96,7 +97,7 @@ const wordings = [
                 </ul>
 
                 <div class="mt-4">
-                    <Button variant="secondary" size="sm" @click="printMode('jacket')">Policy Jacket</Button>
+                    <Button variant="secondary" size="sm" @click="printMode('jacket')"><BookText class="h-3.5 w-3.5" />Policy Jacket</Button>
                 </div>
             </Card>
         </div>

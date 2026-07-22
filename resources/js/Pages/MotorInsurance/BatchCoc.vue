@@ -1,6 +1,7 @@
 <script setup>
 import { ref } from 'vue';
 import { Head } from '@inertiajs/vue3';
+import { FileDown } from 'lucide-vue-next';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import Card from '@/Components/UI/Card.vue';
 import Button from '@/Components/UI/Button.vue';
@@ -40,7 +41,7 @@ const dateTo = ref(nowLocal());
                     <Input id="date_to" v-model="dateTo" name="date_to" type="datetime-local" label="Date To" required />
 
                     <div class="flex justify-end">
-                        <Button type="submit">Generate Batch COC to PDF</Button>
+                        <Button type="submit"><FileDown class="h-4 w-4" />Generate Batch COC to PDF</Button>
                     </div>
                 </form>
             </Card>

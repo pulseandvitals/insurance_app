@@ -1,6 +1,7 @@
 <script setup>
 import { ref } from 'vue';
 import { Head, router, useForm } from '@inertiajs/vue3';
+import { Filter, Plus, X, Inbox } from 'lucide-vue-next';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import Card from '@/Components/UI/Card.vue';
 import Button from '@/Components/UI/Button.vue';
@@ -76,8 +77,8 @@ function peso(value) {
                 <div class="grid grid-cols-1 items-end gap-4 sm:grid-cols-4">
                     <Input id="date_from" v-model="dateFrom" type="date" label="Date From" />
                     <Input id="date_to" v-model="dateTo" type="date" label="Date To" />
-                    <Button variant="secondary" @click="filterData">Filter Data</Button>
-                    <Button @click="showDepositModal = true">Deposit</Button>
+                    <Button variant="secondary" @click="filterData"><Filter class="h-4 w-4" />Filter Data</Button>
+                    <Button @click="showDepositModal = true"><Plus class="h-4 w-4" />Deposit</Button>
                 </div>
             </Card>
 
@@ -85,19 +86,19 @@ function peso(value) {
             <Card title="e-Ewallet History" :padded="false">
                 <div class="overflow-x-auto">
                     <table class="w-full text-left text-sm">
-                        <thead class="bg-gray-50 text-xs uppercase text-gray-500 dark:bg-gray-900/40 dark:text-gray-400">
+                        <thead class="bg-gray-50 text-xs uppercase tracking-wide text-gray-500 dark:bg-gray-900/40 dark:text-gray-400">
                             <tr>
-                                <th class="px-5 py-3">ID</th>
-                                <th class="px-5 py-3">From</th>
-                                <th class="px-5 py-3">To</th>
-                                <th class="px-5 py-3">Transaction</th>
-                                <th class="px-5 py-3 text-right">Debit</th>
-                                <th class="px-5 py-3 text-right">Credit</th>
-                                <th class="px-5 py-3">Date</th>
+                                <th class="px-5 py-3 font-medium">ID</th>
+                                <th class="px-5 py-3 font-medium">From</th>
+                                <th class="px-5 py-3 font-medium">To</th>
+                                <th class="px-5 py-3 font-medium">Transaction</th>
+                                <th class="px-5 py-3 text-right font-medium">Debit</th>
+                                <th class="px-5 py-3 text-right font-medium">Credit</th>
+                                <th class="px-5 py-3 font-medium">Date</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
-                            <tr v-for="tx in transactions" :key="tx.id">
+                            <tr v-for="tx in transactions" :key="tx.id" class="transition-colors hover:bg-gray-50 dark:hover:bg-gray-700/30">
                                 <td class="px-5 py-3 font-mono text-xs text-gray-500 dark:text-gray-400">{{ tx.id }}</td>
                                 <td class="px-5 py-3 text-gray-700 dark:text-gray-200">{{ tx.from_handle }}</td>
                                 <td class="px-5 py-3 text-gray-700 dark:text-gray-200">{{ tx.to_handle ?? '—' }}</td>
@@ -105,14 +106,19 @@ function peso(value) {
                                     <p class="font-medium text-gray-800 dark:text-gray-100">{{ tx.transaction_type }}</p>
                                     <p class="text-xs text-gray-400">{{ tx.reference_label }}</p>
                                 </td>
-                                <td class="px-5 py-3 text-right text-status-critical">{{ Number(tx.debit) > 0 ? peso(tx.debit) : '—' }}</td>
-                                <td class="px-5 py-3 text-right text-status-good">{{ Number(tx.credit) > 0 ? peso(tx.credit) : '—' }}</td>
+                                <td class="px-5 py-3 text-right tabular-nums text-status-critical">{{ Number(tx.debit) > 0 ? peso(tx.debit) : '—' }}</td>
+                                <td class="px-5 py-3 text-right tabular-nums text-status-good">{{ Number(tx.credit) > 0 ? peso(tx.credit) : '—' }}</td>
                                 <td class="px-5 py-3 whitespace-nowrap text-xs text-gray-500 dark:text-gray-400">
                                     {{ new Date(tx.created_at).toLocaleString('en-PH', { dateStyle: 'medium', timeStyle: 'short' }) }}
                                 </td>
                             </tr>
                             <tr v-if="transactions.length === 0">
-                                <td colspan="7" class="px-5 py-10 text-center text-sm text-gray-400">No wallet transactions found.</td>
+                                <td colspan="7" class="px-5 py-10 text-center text-sm text-gray-400">
+                                    <div class="flex flex-col items-center gap-2">
+                                        <Inbox class="h-8 w-8 text-gray-300 dark:text-gray-600" />
+                                        No wallet transactions found.
+                                    </div>
+                                </td>
                             </tr>
                         </tbody>
                     </table>
@@ -141,8 +147,8 @@ function peso(value) {
             </div>
 
             <template #footer>
-                <Button variant="secondary" @click="showDepositModal = false">Close</Button>
-                <Button :disabled="depositForm.processing" @click="submitDeposit">Deposit</Button>
+                <Button variant="secondary" @click="showDepositModal = false"><X class="h-4 w-4" />Close</Button>
+                <Button :disabled="depositForm.processing" @click="submitDeposit"><Plus class="h-4 w-4" />Deposit</Button>
             </template>
         </Modal>
     </AuthenticatedLayout>

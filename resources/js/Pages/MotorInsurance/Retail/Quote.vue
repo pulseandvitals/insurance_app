@@ -1,5 +1,6 @@
 <script setup>
 import { Head, router } from '@inertiajs/vue3';
+import { Printer, ArrowRight } from 'lucide-vue-next';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import Card from '@/Components/UI/Card.vue';
 import Button from '@/Components/UI/Button.vue';
@@ -48,7 +49,7 @@ function proceed() {
                         </tr>
                     </thead>
                     <tbody class="border-t border-gray-100 dark:border-gray-700">
-                        <tr>
+                        <tr class="transition-colors hover:bg-gray-50 dark:hover:bg-gray-700/30">
                             <td class="py-3 text-gray-700 dark:text-gray-200">Compulsory Liability: Bodily Injury/Death (CTPL)</td>
                             <td class="py-3 text-right tabular-nums text-gray-700 dark:text-gray-200">{{ peso(COVER_INSURANCE_AMOUNT) }}</td>
                             <td class="py-3 text-right font-medium tabular-nums text-gray-900 dark:text-gray-100">{{ peso(quote.net_premium) }}</td>
@@ -75,8 +76,8 @@ function proceed() {
                 </p>
 
                 <div class="mt-6 flex justify-end gap-3 print:hidden">
-                    <Button variant="secondary" @click="window.print()">Print Quote</Button>
-                    <Button @click="proceed">Proceed</Button>
+                    <Button variant="secondary" @click="window.print()"><Printer class="h-4 w-4" />Print Quote</Button>
+                    <Button @click="proceed">Proceed<ArrowRight class="h-4 w-4" /></Button>
                 </div>
             </Card>
         </div>

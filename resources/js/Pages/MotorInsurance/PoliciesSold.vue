@@ -1,6 +1,7 @@
 <script setup>
 import { ref } from 'vue';
 import { Head, Link, router } from '@inertiajs/vue3';
+import { Search, Eye, Download, Inbox } from 'lucide-vue-next';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import Card from '@/Components/UI/Card.vue';
 import Button from '@/Components/UI/Button.vue';
@@ -53,7 +54,7 @@ function daysBeforeExpiration(contractTo) {
                     <Select id="direct_status" v-model="form.direct_status" label="Direct Status" placeholder="All" :options="['Yes', 'No']" />
                 </div>
                 <div class="mt-4 flex justify-end">
-                    <Button @click="search">Search</Button>
+                    <Button @click="search"><Search class="h-4 w-4" />Search</Button>
                 </div>
             </Card>
 
@@ -77,13 +78,14 @@ function daysBeforeExpiration(contractTo) {
                         </div>
 
                         <div class="flex shrink-0 flex-col gap-2 sm:items-end">
-                            <Link :href="route('policies.show', policy.id)"><Button variant="secondary" size="sm">View Policy</Button></Link>
-                            <a :href="route('policies.download', policy.id)"><Button variant="outline" size="sm">Download COC</Button></a>
+                            <Link :href="route('policies.show', policy.id)"><Button variant="secondary" size="sm"><Eye class="h-3.5 w-3.5" />View Policy</Button></Link>
+                            <a :href="route('policies.download', policy.id)"><Button variant="outline" size="sm"><Download class="h-3.5 w-3.5" />Download COC</Button></a>
                         </div>
                     </div>
                 </Card>
 
-                <div v-if="policies.length === 0" class="rounded-xl border border-dashed border-gray-300 py-10 text-center text-sm text-gray-400 dark:border-gray-700">
+                <div v-if="policies.length === 0" class="flex flex-col items-center gap-2 rounded-xl border border-dashed border-gray-300 py-10 text-center text-sm text-gray-400 dark:border-gray-700">
+                    <Inbox class="h-8 w-8 text-gray-300 dark:text-gray-600" />
                     No policies found for the selected filters.
                 </div>
             </div>

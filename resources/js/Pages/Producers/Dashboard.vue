@@ -1,6 +1,7 @@
 <script setup>
 import { ref } from 'vue';
 import { Head, Link, router } from '@inertiajs/vue3';
+import { Pencil, Filter } from 'lucide-vue-next';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import Card from '@/Components/UI/Card.vue';
 import Badge from '@/Components/UI/Badge.vue';
@@ -49,7 +50,7 @@ function peso(value) {
                     </div>
                 </div>
                 <Link :href="route('producers.edit', producer.id)">
-                    <Button variant="secondary">Edit Profile</Button>
+                    <Button variant="secondary"><Pencil class="h-4 w-4" />Edit Profile</Button>
                 </Link>
             </div>
 
@@ -93,7 +94,7 @@ function peso(value) {
                 <div class="grid grid-cols-1 items-end gap-4 sm:grid-cols-3">
                     <Input id="date_from" v-model="dateFrom" type="date" label="Date From" />
                     <Input id="date_to" v-model="dateTo" type="date" label="Date To" />
-                    <Button @click="filterData">Filter Data</Button>
+                    <Button @click="filterData"><Filter class="h-4 w-4" />Filter Data</Button>
                 </div>
             </Card>
 

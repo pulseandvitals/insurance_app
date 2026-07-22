@@ -1,5 +1,6 @@
 <script setup>
 import { watch } from 'vue';
+import { X } from 'lucide-vue-next';
 
 const props = defineProps({
     show: {
@@ -67,9 +68,7 @@ watch(
                                     class="rounded-md p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600 dark:hover:bg-gray-700"
                                     @click="emit('close')"
                                 >
-                                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-                                    </svg>
+                                    <X class="h-5 w-5" />
                                 </button>
                             </div>
 

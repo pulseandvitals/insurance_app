@@ -1,5 +1,6 @@
 <script setup>
 import { Head, useForm } from '@inertiajs/vue3';
+import { Save } from 'lucide-vue-next';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import Card from '@/Components/UI/Card.vue';
 import Button from '@/Components/UI/Button.vue';
@@ -74,7 +75,7 @@ function submit() {
             </Card>
 
             <div class="flex justify-end">
-                <Button :disabled="form.processing" @click="submit">Save Changes</Button>
+                <Button :disabled="form.processing" @click="submit"><Save class="h-4 w-4" />Save Changes</Button>
             </div>
         </div>
     </AuthenticatedLayout>

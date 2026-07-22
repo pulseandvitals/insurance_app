@@ -1,6 +1,7 @@
 <script setup>
 import { ref } from 'vue';
 import { Head, Link, router } from '@inertiajs/vue3';
+import { Search, Eye, Inbox } from 'lucide-vue-next';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import Card from '@/Components/UI/Card.vue';
 import Badge from '@/Components/UI/Badge.vue';
@@ -46,7 +47,7 @@ function search() {
                     />
                     <Input id="plate_no" v-model="plateNo" label="Plate / Conduction Number" />
                     <Input id="quote_ref" v-model="quoteRef" label="Quotation Ref#:" />
-                    <Button @click="search">Search</Button>
+                    <Button @click="search"><Search class="h-4 w-4" />Search</Button>
                 </div>
             </Card>
 
@@ -66,12 +67,13 @@ function search() {
                         </div>
 
                         <Link :href="quote.status === 'policy' ? route('policies.show', quote.policy.id) : route('motor-risks.show', quote.id)">
-                            <Button variant="secondary" size="sm">{{ quote.status === 'policy' ? 'View Policy' : 'View Quote' }}</Button>
+                            <Button variant="secondary" size="sm"><Eye class="h-3.5 w-3.5" />{{ quote.status === 'policy' ? 'View Policy' : 'View Quote' }}</Button>
                         </Link>
                     </div>
                 </Card>
 
-                <div v-if="quotes.length === 0" class="rounded-xl border border-dashed border-gray-300 py-10 text-center text-sm text-gray-400 dark:border-gray-700">
+                <div v-if="quotes.length === 0" class="flex flex-col items-center gap-2 rounded-xl border border-dashed border-gray-300 py-10 text-center text-sm text-gray-400 dark:border-gray-700">
+                    <Inbox class="h-8 w-8 text-gray-300 dark:text-gray-600" />
                     No quotations found.
                 </div>
             </div>

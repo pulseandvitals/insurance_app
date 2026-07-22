@@ -1,5 +1,6 @@
 <script setup>
 import { useForm, Head } from '@inertiajs/vue3';
+import { Search } from 'lucide-vue-next';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import Card from '@/Components/UI/Card.vue';
 import Button from '@/Components/UI/Button.vue';
@@ -42,7 +43,7 @@ function submit() {
                     </p>
 
                     <div class="flex justify-end">
-                        <Button type="submit" :disabled="form.processing">Search</Button>
+                        <Button type="submit" :disabled="form.processing"><Search class="h-4 w-4" />Search</Button>
                     </div>
                 </form>
             </Card>

@@ -1,6 +1,7 @@
 <script setup>
 import { computed, watch } from 'vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
+import { ArrowLeft, ArrowRight } from 'lucide-vue-next';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import Card from '@/Components/UI/Card.vue';
 import Button from '@/Components/UI/Button.vue';
@@ -186,8 +187,8 @@ function submit() {
                     />
 
                     <div class="flex items-center justify-between pt-2">
-                        <Link :href="route('dashboard')"><Button type="button" variant="secondary">Back</Button></Link>
-                        <Button type="submit" :disabled="form.processing || blocked">Create Quote</Button>
+                        <Link :href="route('dashboard')"><Button type="button" variant="secondary"><ArrowLeft class="h-4 w-4" />Back</Button></Link>
+                        <Button type="submit" :disabled="form.processing || blocked">Create Quote<ArrowRight class="h-4 w-4" /></Button>
                     </div>
                 </form>
             </Card>

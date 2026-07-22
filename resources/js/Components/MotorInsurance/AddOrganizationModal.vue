@@ -1,6 +1,7 @@
 <script setup>
 import { computed, watch } from 'vue';
 import { useForm } from '@inertiajs/vue3';
+import { X, Building2 } from 'lucide-vue-next';
 import Modal from '@/Components/UI/Modal.vue';
 import Input from '@/Components/UI/Input.vue';
 import Select from '@/Components/UI/Select.vue';
@@ -65,8 +66,8 @@ function submit() {
         </div>
 
         <template #footer>
-            <Button variant="secondary" @click="$emit('close')">Close</Button>
-            <Button :disabled="form.processing" @click="submit">Add Policyholder</Button>
+            <Button variant="secondary" @click="$emit('close')"><X class="h-4 w-4" />Close</Button>
+            <Button :disabled="form.processing" @click="submit"><Building2 class="h-4 w-4" />Add Policyholder</Button>
         </template>
     </Modal>
 </template>

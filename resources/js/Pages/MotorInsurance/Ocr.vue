@@ -1,5 +1,6 @@
 <script setup>
 import { useForm, Head } from '@inertiajs/vue3';
+import { Upload } from 'lucide-vue-next';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import Card from '@/Components/UI/Card.vue';
 import Button from '@/Components/UI/Button.vue';
@@ -61,7 +62,7 @@ function submit() {
                     </label>
 
                     <div class="flex justify-end">
-                        <Button type="submit" :disabled="form.processing">Upload</Button>
+                        <Button type="submit" :disabled="form.processing"><Upload class="h-4 w-4" />Upload</Button>
                     </div>
                 </form>
             </Card>

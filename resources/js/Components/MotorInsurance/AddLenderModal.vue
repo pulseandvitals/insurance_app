@@ -1,5 +1,6 @@
 <script setup>
 import { useForm } from '@inertiajs/vue3';
+import { X, Landmark } from 'lucide-vue-next';
 import Modal from '@/Components/UI/Modal.vue';
 import SearchableSelect from '@/Components/UI/SearchableSelect.vue';
 import Button from '@/Components/UI/Button.vue';
@@ -40,8 +41,8 @@ function submit() {
         />
 
         <template #footer>
-            <Button variant="secondary" @click="$emit('close')">Close</Button>
-            <Button :disabled="form.processing" @click="submit">Add Policyholder</Button>
+            <Button variant="secondary" @click="$emit('close')"><X class="h-4 w-4" />Close</Button>
+            <Button :disabled="form.processing" @click="submit"><Landmark class="h-4 w-4" />Add Policyholder</Button>
         </template>
     </Modal>
 </template>

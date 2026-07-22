@@ -1,5 +1,6 @@
 <script setup>
 import { Head, useForm } from '@inertiajs/vue3';
+import { Wallet, Loader2 } from 'lucide-vue-next';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import Card from '@/Components/UI/Card.vue';
 import Button from '@/Components/UI/Button.vue';
@@ -45,7 +46,11 @@ const insufficientFunds = Number(props.wallet.balance) < Number(props.quote.tota
                 </Banner>
 
                 <div class="mt-6 flex justify-end">
-                    <Button :disabled="form.processing || insufficientFunds" @click="pay">Pay &amp; Issue Policy</Button>
+                    <Button :disabled="form.processing || insufficientFunds" @click="pay">
+                        <Loader2 v-if="form.processing" class="h-4 w-4 animate-spin" />
+                        <Wallet v-else class="h-4 w-4" />
+                        Pay &amp; Issue Policy
+                    </Button>
                 </div>
             </Card>
         </div>

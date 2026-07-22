@@ -1,6 +1,7 @@
 <script setup>
 import { computed, ref } from 'vue';
 import { Head, router, useForm } from '@inertiajs/vue3';
+import { Landmark, Building2, UserPlus, Save, ArrowLeft, ArrowRight, Loader2 } from 'lucide-vue-next';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import Card from '@/Components/UI/Card.vue';
 import Button from '@/Components/UI/Button.vue';
@@ -131,23 +132,27 @@ function proceedToCheckout() {
                 </div>
 
                 <div class="mt-4 flex justify-end">
-                    <Button variant="secondary" :disabled="detailsForm.processing" @click="saveDetails">Save Vehicle Details</Button>
+                    <Button variant="secondary" :disabled="detailsForm.processing" @click="saveDetails"><Save class="h-4 w-4" />Save Vehicle Details</Button>
                 </div>
             </Card>
 
             <Card title="Add Policyholder/s">
                 <div class="mb-4 flex flex-wrap gap-2">
-                    <Button variant="outline" size="sm" @click="showLender = true">Add Lender</Button>
-                    <Button variant="outline" size="sm" @click="showOrganization = true">Add Organization</Button>
-                    <Button variant="outline" size="sm" @click="showPerson = true">Add Person</Button>
+                    <Button variant="outline" size="sm" @click="showLender = true"><Landmark class="h-3.5 w-3.5" />Add Lender</Button>
+                    <Button variant="outline" size="sm" @click="showOrganization = true"><Building2 class="h-3.5 w-3.5" />Add Organization</Button>
+                    <Button variant="outline" size="sm" @click="showPerson = true"><UserPlus class="h-3.5 w-3.5" />Add Person</Button>
                 </div>
 
                 <PolicyholderTable :motor-quote-id="quote.id" :policyholders="quote.policyholders" />
             </Card>
 
             <div class="flex items-center justify-between">
-                <Button variant="secondary" @click="router.get(route('motor-risks.show', quote.id))">Back</Button>
-                <Button :disabled="proceeding" @click="proceedToCheckout">{{ proceeding ? 'Proceeding…' : 'Proceed to Checkout' }}</Button>
+                <Button variant="secondary" @click="router.get(route('motor-risks.show', quote.id))"><ArrowLeft class="h-4 w-4" />Back</Button>
+                <Button :disabled="proceeding" @click="proceedToCheckout">
+                    <Loader2 v-if="proceeding" class="h-4 w-4 animate-spin" />
+                    <ArrowRight v-else class="h-4 w-4" />
+                    {{ proceeding ? 'Proceeding…' : 'Proceed to Checkout' }}
+                </Button>
             </div>
         </div>
 

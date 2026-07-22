@@ -1,5 +1,6 @@
 <script setup>
 import { computed } from 'vue';
+import { CheckCircle2, AlertCircle, AlertTriangle, Info, X } from 'lucide-vue-next';
 
 const props = defineProps({
     variant: {
@@ -29,7 +30,7 @@ const styles = {
         iconBg: 'bg-status-good/15 text-status-good dark:text-green-400',
         bar: 'bg-status-good',
         title: 'text-gray-900 dark:text-gray-100',
-        icon: 'M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z',
+        icon: CheckCircle2,
         defaultTitle: 'Success',
     },
     critical: {
@@ -37,7 +38,7 @@ const styles = {
         iconBg: 'bg-status-critical/15 text-status-critical dark:text-red-400',
         bar: 'bg-status-critical',
         title: 'text-gray-900 dark:text-gray-100',
-        icon: 'M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z',
+        icon: AlertCircle,
         defaultTitle: 'Something went wrong',
     },
     warning: {
@@ -45,7 +46,7 @@ const styles = {
         iconBg: 'bg-status-warning/15 text-status-warning dark:text-amber-400',
         bar: 'bg-status-warning',
         title: 'text-gray-900 dark:text-gray-100',
-        icon: 'M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z',
+        icon: AlertTriangle,
         defaultTitle: 'Heads up',
     },
     info: {
@@ -53,7 +54,7 @@ const styles = {
         iconBg: 'bg-primary-100 text-primary-600 dark:bg-primary-900/40 dark:text-primary-300',
         bar: 'bg-primary-500',
         title: 'text-gray-900 dark:text-gray-100',
-        icon: 'M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z',
+        icon: Info,
         defaultTitle: 'Note',
     },
 };
@@ -70,9 +71,7 @@ const heading = computed(() => props.title || style.value.defaultTitle);
     >
         <div class="flex items-start gap-3 p-4">
             <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full" :class="style.iconBg">
-                <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="1.75" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" :d="style.icon" />
-                </svg>
+                <component :is="style.icon" class="h-5 w-5" stroke-width="1.75" />
             </div>
             <div class="min-w-0 flex-1 pt-0.5">
                 <p class="text-sm font-semibold" :class="style.title">{{ heading }}</p>
@@ -84,9 +83,7 @@ const heading = computed(() => props.title || style.value.defaultTitle);
                 @click="$emit('dismiss')"
             >
                 <span class="sr-only">Dismiss</span>
-                <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-                </svg>
+                <X class="h-4 w-4" />
             </button>
         </div>
         <div class="h-1 w-full bg-black/5 dark:bg-white/10">
