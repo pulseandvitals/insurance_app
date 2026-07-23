@@ -6,16 +6,12 @@ use App\Http\Controllers\PolicyController;
 use App\Http\Controllers\PolicyholderController;
 use App\Http\Controllers\ProducerController;
 use App\Http\Controllers\WalletController;
-use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
         'canLogin' => Route::has('login'),
-        'canRegister' => Route::has('register'),
-        'laravelVersion' => Application::VERSION,
-        'phpVersion' => PHP_VERSION,
     ]);
 });
 
