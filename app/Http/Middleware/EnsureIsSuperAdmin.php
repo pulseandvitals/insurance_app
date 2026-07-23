@@ -2,15 +2,12 @@
 
 namespace App\Http\Middleware;
 
-use App\Services\ProducerProvisioner;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class EnsureProducerProvisioned
+class EnsureIsSuperAdmin
 {
-    public function __construct(private readonly ProducerProvisioner $provisioner) {}
-
     /**
      * Handle an incoming request.
      *
@@ -18,11 +15,7 @@ class EnsureProducerProvisioned
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $user = $request->user();
-
-        if ($user && ! $user->isSuperAdmin()) {
-            $this->provisioner->provision($user);
-        }
+        abort_unless($request->user()?->isSuperAdmin(), 403);
 
         return $next($request);
     }

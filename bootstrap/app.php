@@ -19,6 +19,7 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $middleware->alias([
             'producer' => \App\Http\Middleware\EnsureProducerProvisioned::class,
+            'admin' => \App\Http\Middleware\EnsureIsSuperAdmin::class,
         ]);
 
         //

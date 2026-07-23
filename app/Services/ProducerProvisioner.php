@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Branch;
 use App\Models\Deposit;
 use App\Models\MotorQuote;
 use App\Models\Policy;
@@ -16,11 +17,13 @@ class ProducerProvisioner
 {
     public function __construct(private readonly CtplPremiumCalculator $calculator) {}
 
-    public function provision(User $user): Producer
+    public function provision(User $user, ?Branch $branch = null): Producer
     {
         if ($user->producer) {
             return $user->producer;
         }
+
+        $branch ??= Branch::query()->orderBy('id')->firstOrFail();
 
         [$firstName, $lastName] = $this->splitName($user->name);
 
@@ -37,8 +40,7 @@ class ProducerProvisioner
             'address' => 'Unit 12B, Fortune Bldg., Ayala Ave., Makati City, Metro Manila',
             'email' => $user->email,
             'phone' => '0917'.random_int(1000000, 9999999),
-            'branch_code' => 'MKT-001',
-            'branch_name' => 'Makati Main Branch',
+            'branch_id' => $branch->id,
         ]);
 
         $wallet = Wallet::create([

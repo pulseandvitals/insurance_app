@@ -24,8 +24,11 @@ class ProducerResource extends JsonResource
             'address' => $this->address,
             'email' => $this->email,
             'phone' => $this->phone,
-            'branch_code' => $this->branch_code,
-            'branch_name' => $this->branch_name,
+            'branch' => $this->branch ? [
+                'id' => $this->branch->id,
+                'code' => $this->branch->code,
+                'name' => $this->branch->name,
+            ] : null,
             'wallet_handle' => $this->wallet_handle,
             'created_at' => $this->created_at,
         ];

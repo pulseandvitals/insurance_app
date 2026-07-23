@@ -78,7 +78,7 @@ function peso(value) {
                 </Card>
 
                 <Card title="Attached to">
-                    <p class="text-sm text-gray-600 dark:text-gray-300">{{ producer.branch_code }} — {{ producer.branch_name }}</p>
+                    <p class="text-sm text-gray-600 dark:text-gray-300">{{ producer.branch?.code }} — {{ producer.branch?.name }}</p>
                 </Card>
 
                 <Card title="Producer Tier">

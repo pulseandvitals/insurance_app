@@ -1,5 +1,8 @@
 <?php
 
+use App\Http\Controllers\Admin\BranchController;
+use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
+use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\DepositController;
 use App\Http\Controllers\MotorQuoteController;
 use App\Http\Controllers\PolicyController;
@@ -16,8 +19,21 @@ Route::get('/', function () {
 });
 
 Route::get('/dashboard', function () {
-    return redirect()->route('producers.dashboard', request()->user()->producer);
+    $user = request()->user();
+
+    if ($user->isSuperAdmin()) {
+        return redirect()->route('admin.dashboard');
+    }
+
+    return redirect()->route('producers.dashboard', $user->producer);
 })->middleware(['auth', 'verified', 'producer'])->name('dashboard');
+
+Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/', [AdminDashboardController::class, 'index'])->name('dashboard');
+
+    Route::resource('branches', BranchController::class)->except(['show']);
+    Route::resource('users', AdminUserController::class)->only(['index', 'create', 'store', 'edit', 'update']);
+});
 
 Route::middleware(['auth', 'verified', 'producer'])->group(function () {
     // Producer dashboard & account

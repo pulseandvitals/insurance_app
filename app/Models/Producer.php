@@ -24,8 +24,7 @@ class Producer extends Model
         'address',
         'email',
         'phone',
-        'branch_code',
-        'branch_name',
+        'branch_id',
     ];
 
     protected function casts(): array
@@ -38,6 +37,11 @@ class Producer extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function branch(): BelongsTo
+    {
+        return $this->belongsTo(Branch::class);
     }
 
     public function wallet(): HasOne
