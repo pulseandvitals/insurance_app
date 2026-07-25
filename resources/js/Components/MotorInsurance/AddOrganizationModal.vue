@@ -4,7 +4,7 @@ import { useForm } from '@inertiajs/vue3';
 import { X, Building2 } from 'lucide-vue-next';
 import Modal from '@/Components/UI/Modal.vue';
 import Input from '@/Components/UI/Input.vue';
-import Select from '@/Components/UI/Select.vue';
+import SearchableSelect from '@/Components/UI/SearchableSelect.vue';
 import Button from '@/Components/UI/Button.vue';
 import { regions, provincesFor, citiesFor, barangaysFor } from '@/Data/addressData';
 
@@ -51,10 +51,10 @@ function submit() {
         <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <Input id="o_name" v-model="form.name" label="Name" required :error="form.errors.name" class="sm:col-span-2" />
             <Input id="o_address_line_1" v-model="form.address_line_1" label="Address Line 1" required :error="form.errors.address_line_1" class="sm:col-span-2" />
-            <Select id="o_region" v-model="form.region" label="Region" required :error="form.errors.region" :options="regions()" />
-            <Select id="o_province" v-model="form.province" label="Province" required :error="form.errors.province" :disabled="!form.region" :options="provinceOptions" />
-            <Select id="o_city" v-model="form.city" label="City/Municipality" required :error="form.errors.city" :disabled="!form.province" :options="cityOptions" />
-            <Select id="o_barangay" v-model="form.barangay" label="Barangay" required :error="form.errors.barangay" :disabled="!form.city" :options="barangayOptions" />
+            <SearchableSelect id="o_region" v-model="form.region" label="Region" required placeholder="Search regions..." :error="form.errors.region" :options="regions()" />
+            <SearchableSelect id="o_province" v-model="form.province" label="Province" required placeholder="Search provinces..." :error="form.errors.province" :disabled="!form.region" :options="provinceOptions" />
+            <SearchableSelect id="o_city" v-model="form.city" label="City/Municipality" required creatable entry-label="city" placeholder="Search or type a city..." :error="form.errors.city" :disabled="!form.province" :options="cityOptions" />
+            <SearchableSelect id="o_barangay" v-model="form.barangay" label="Barangay" required creatable entry-label="barangay" placeholder="Search or type a barangay..." :error="form.errors.barangay" :disabled="!form.city" :options="barangayOptions" />
             <Input id="o_country" model-value="Philippines" label="Country" disabled />
             <Input id="o_zip_code" v-model="form.zip_code" label="ZIP Code" :error="form.errors.zip_code" />
             <Input id="o_email" v-model="form.email" type="email" label="Email" :error="form.errors.email" />

@@ -5,6 +5,7 @@ import { X, UserPlus } from 'lucide-vue-next';
 import Modal from '@/Components/UI/Modal.vue';
 import Input from '@/Components/UI/Input.vue';
 import Select from '@/Components/UI/Select.vue';
+import SearchableSelect from '@/Components/UI/SearchableSelect.vue';
 import Button from '@/Components/UI/Button.vue';
 import Checkbox from '@/Components/Checkbox.vue';
 import { regions, provincesFor, citiesFor, barangaysFor } from '@/Data/addressData';
@@ -79,10 +80,10 @@ function submit() {
         </div>
 
         <div class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <Select id="p_region" v-model="form.region" label="Region" required :error="form.errors.region" :options="regions()" />
-            <Select id="p_province" v-model="form.province" label="Province" required :error="form.errors.province" :disabled="!form.region" :options="provinceOptions" />
-            <Select id="p_city" v-model="form.city" label="City/Municipality" required :error="form.errors.city" :disabled="!form.province" :options="cityOptions" />
-            <Select id="p_barangay" v-model="form.barangay" label="Barangay" :disabled="!form.city" :options="barangayOptions" />
+            <SearchableSelect id="p_region" v-model="form.region" label="Region" required placeholder="Search regions..." :error="form.errors.region" :options="regions()" />
+            <SearchableSelect id="p_province" v-model="form.province" label="Province" required placeholder="Search provinces..." :error="form.errors.province" :disabled="!form.region" :options="provinceOptions" />
+            <SearchableSelect id="p_city" v-model="form.city" label="City/Municipality" required creatable entry-label="city" placeholder="Search or type a city..." :error="form.errors.city" :disabled="!form.province" :options="cityOptions" />
+            <SearchableSelect id="p_barangay" v-model="form.barangay" label="Barangay" creatable entry-label="barangay" placeholder="Search or type a barangay..." :disabled="!form.city" :options="barangayOptions" />
         </div>
 
         <label class="mt-5 flex items-start gap-2 text-sm text-gray-600 dark:text-gray-300">
