@@ -10,6 +10,7 @@ use App\Http\Requests\Policy\RenewalSearchRequest;
 use App\Http\Resources\PolicyResource;
 use App\Http\Resources\WalletResource;
 use App\Models\Policy;
+use App\Support\PrintLogo;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -142,7 +143,7 @@ class PolicyController extends Controller
             return back()->with('error', 'No policies were found within the selected date range.');
         }
 
-        $pdf = Pdf::loadView('policies.batch-coc', ['policies' => $policies]);
+        $pdf = Pdf::loadView('policies.batch-coc', ['policies' => $policies, 'logo' => PrintLogo::dataUri()]);
 
         return $pdf->download('batch-coc-'.now()->format('Ymd-His').'.pdf');
     }
@@ -151,7 +152,7 @@ class PolicyController extends Controller
     {
         $policy->load('motorQuote.policyholders', 'producer');
 
-        $pdf = Pdf::loadView('policies.print', ['policy' => $policy, 'mode' => 'coc']);
+        $pdf = Pdf::loadView('policies.print', ['policy' => $policy, 'mode' => 'coc', 'logo' => PrintLogo::dataUri()]);
 
         return $pdf->download("COC-{$policy->online_policy_no}.pdf");
     }
@@ -160,6 +161,6 @@ class PolicyController extends Controller
     {
         $policy->load('motorQuote.policyholders', 'producer');
 
-        return view('policies.print', ['policy' => $policy, 'mode' => $mode]);
+        return view('policies.print', ['policy' => $policy, 'mode' => $mode, 'logo' => PrintLogo::dataUri()]);
     }
 }

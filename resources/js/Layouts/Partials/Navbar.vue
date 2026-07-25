@@ -31,7 +31,7 @@ const greeting = computed(() => {
         </button>
 
         <Link href="/" class="hidden items-center gap-2 sm:flex">
-            <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-primary-600 text-xs font-bold text-white">FG</span>
+            <img src="/logo/stronghold_logo.png" alt="Stronghold" class="h-8 w-8 rounded-lg object-contain" />
         </Link>
 
         <h1 class="truncate text-base font-semibold text-gray-900 dark:text-gray-100 sm:text-lg">SICI Producers' Portal</h1>

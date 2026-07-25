@@ -19,6 +19,10 @@ function peso(value) {
 function proceed() {
     router.post(route('motor-risks.proceed', props.quote.id));
 }
+
+function printQuote() {
+    window.open(route('motor-risks.print', props.quote.id), '_blank');
+}
 </script>
 
 <template>
@@ -76,7 +80,7 @@ function proceed() {
                 </p>
 
                 <div class="mt-6 flex justify-end gap-3 print:hidden">
-                    <Button variant="secondary" @click="window.print()"><Printer class="h-4 w-4" />Print Quote</Button>
+                    <Button variant="secondary" @click="printQuote"><Printer class="h-4 w-4" />Print Quote</Button>
                     <Button @click="proceed">Proceed<ArrowRight class="h-4 w-4" /></Button>
                 </div>
             </Card>

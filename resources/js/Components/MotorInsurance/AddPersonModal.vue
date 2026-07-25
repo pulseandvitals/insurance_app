@@ -15,21 +15,17 @@ const props = defineProps({
 });
 const emit = defineEmits(['close']);
 
-const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 const days = Array.from({ length: 31 }, (_, i) => i + 1);
 const years = Array.from({ length: 90 }, (_, i) => new Date().getFullYear() - 18 - i);
 
 const form = useForm({
     type: 'person',
-    title: '',
     first_name: '',
     middle_name: '',
     last_name: '',
     suffix: '',
-    birth_month: '',
     birth_day: '',
     birth_year: '',
-    tin: '',
     street: '',
     email: '',
     region: '',
@@ -62,8 +58,7 @@ function submit() {
 <template>
     <Modal :show="show" title="Add Person" max-width="lg" @close="$emit('close')">
         <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
-            <Select id="p_title" v-model="form.title" label="Title" :options="['Mr.', 'Ms.', 'Mrs.', 'Dr.', 'Engr.']" />
-            <Input id="p_first_name" v-model="form.first_name" label="First name" required :error="form.errors.first_name" class="sm:col-span-1" />
+            <Input id="p_first_name" v-model="form.first_name" label="First name" required :error="form.errors.first_name" />
             <Input id="p_middle_name" v-model="form.middle_name" label="Middle name" :error="form.errors.middle_name" />
             <Input id="p_last_name" v-model="form.last_name" label="Last name" required :error="form.errors.last_name" />
             <Input id="p_suffix" v-model="form.suffix" label="Suffix" :error="form.errors.suffix" />
@@ -71,16 +66,14 @@ function submit() {
 
         <div class="mt-4">
             <p class="mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">Birth Date</p>
-            <div class="grid grid-cols-3 gap-4">
-                <Select id="p_birth_month" v-model="form.birth_month" placeholder="Month" :options="months" />
+            <div class="grid grid-cols-2 gap-4">
                 <Select id="p_birth_day" v-model="form.birth_day" placeholder="Day" :options="days" />
                 <Select id="p_birth_year" v-model="form.birth_year" placeholder="Year" :options="years" />
             </div>
         </div>
 
         <div class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <Input id="p_tin" v-model="form.tin" label="TIN #" :error="form.errors.tin" />
-            <Input id="p_street" v-model="form.street" label="Building or Street No. + Street Name" required :error="form.errors.street" />
+            <Input id="p_street" v-model="form.street" label="Building or Street No. + Street Name" required :error="form.errors.street" class="sm:col-span-2" />
             <Input id="p_email" v-model="form.email" type="email" label="Email" required :error="form.errors.email" />
             <Input id="p_contact_number" v-model="form.contact_number" label="Contact Number" required :error="form.errors.contact_number" help="Mobile (12-digit) or landline (8-digit)" />
         </div>

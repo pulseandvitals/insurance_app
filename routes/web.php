@@ -57,6 +57,7 @@ Route::middleware(['auth', 'verified', 'producer'])->group(function () {
 
     // Motor CTPL — Retail wizard
     Route::get('/motor_risks/{motorQuote}', [MotorQuoteController::class, 'show'])->name('motor-risks.show');
+    Route::get('/motor_risks/{motorQuote}/print', [MotorQuoteController::class, 'print'])->name('motor-risks.print');
     Route::post('/motor_risks/{motorQuote}/proceed', [MotorQuoteController::class, 'proceed'])->name('motor-risks.proceed');
     Route::get('/motor_risks/{motorQuote}/pre_flight', [MotorQuoteController::class, 'preFlight'])->name('motor-risks.pre-flight');
     Route::post('/motor_risks/{motorQuote}/pre_flight', [MotorQuoteController::class, 'preFlightStore'])->name('motor-risks.pre-flight.store');

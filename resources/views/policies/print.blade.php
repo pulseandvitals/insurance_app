@@ -7,6 +7,8 @@
         * { box-sizing: border-box; }
         body { font-family: 'DejaVu Sans', Helvetica, Arial, sans-serif; color: #111; font-size: 13px; margin: 0; padding: 32px; }
         .letterhead { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 3px solid #2a78d6; padding-bottom: 12px; margin-bottom: 20px; }
+        .brand { display: flex; align-items: center; gap: 10px; }
+        .brand img { width: 44px; height: 44px; object-fit: contain; }
         .letterhead h1 { font-size: 16px; margin: 0; color: #184f95; }
         .letterhead p { margin: 2px 0 0; font-size: 11px; color: #555; }
         .doc-title { text-align: right; }
@@ -16,8 +18,7 @@
         th, td { text-align: left; padding: 6px 8px; border: 1px solid #ddd; font-size: 12px; }
         th { background: #f2f6fc; }
         .section-title { font-size: 13px; font-weight: bold; margin: 22px 0 6px; color: #184f95; }
-        .kv { display: flex; flex-wrap: wrap; gap: 16px; margin-top: 6px; }
-        .kv div { min-width: 200px; margin-bottom: 8px; }
+        .kv { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px 20px; margin-top: 6px; }
         .kv label { display: block; font-size: 10px; text-transform: uppercase; color: #888; }
         .kv span { font-size: 13px; font-weight: 600; }
         .premium-box { border: 1px solid #ddd; border-radius: 6px; padding: 12px 16px; margin-top: 10px; width: 300px; margin-left: auto; }
@@ -30,10 +31,13 @@
 </head>
 <body onload="window.print()">
     <div class="letterhead">
-        <div>
-            <h1>Stronghold</h1>
-            <p>InsurApp — SICI Producers' Portal</p>
-            <p>Posted to Genweb: {{ $policy->genweb_code }}</p>
+        <div class="brand">
+            <img src="{{ $logo }}" alt="Stronghold">
+            <div>
+                <h1>Stronghold</h1>
+                <p>InsurApp — SICI Producers' Portal</p>
+                <p>Posted to Genweb: {{ $policy->genweb_code }}</p>
+            </div>
         </div>
         <div class="doc-title">
             <h2>

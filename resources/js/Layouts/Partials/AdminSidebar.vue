@@ -33,7 +33,7 @@ const navItems = [
     >
         <!-- Brand -->
         <div class="flex h-16 shrink-0 items-center gap-2 border-b border-gray-200 px-6 dark:border-gray-700">
-            <span class="flex h-9 w-9 items-center justify-center rounded-lg bg-primary-600 text-sm font-bold text-white">FG</span>
+            <img src="/logo/stronghold_logo.png" alt="Stronghold" class="h-9 w-9 rounded-lg object-contain" />
             <div class="leading-tight">
                 <p class="text-sm font-bold tracking-tight text-gray-900 dark:text-gray-100">InsurApp</p>
                 <p class="text-[11px] text-gray-400 dark:text-gray-500">Admin</p>

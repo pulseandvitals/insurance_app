@@ -9,15 +9,12 @@ class StorePolicyholderRequest extends PolicyholderRequest
         return match ($this->input('type')) {
             'person' => [
                 'type' => ['required', 'in:person'],
-                'title' => ['nullable', 'string', 'max:10'],
                 'first_name' => ['required', 'string', 'max:100'],
                 'middle_name' => ['nullable', 'string', 'max:100'],
                 'last_name' => ['required', 'string', 'max:100'],
                 'suffix' => ['nullable', 'string', 'max:10'],
-                'birth_month' => ['nullable', 'string', 'max:20'],
                 'birth_day' => ['nullable', 'string', 'max:2'],
                 'birth_year' => ['nullable', 'string', 'max:4'],
-                'tin' => ['nullable', 'string', 'max:20'],
                 'street' => ['required', 'string', 'max:150'],
                 'email' => ['required', 'email', 'max:150'],
                 'region' => ['required', 'string', 'max:100'],
@@ -30,8 +27,6 @@ class StorePolicyholderRequest extends PolicyholderRequest
             'organization' => [
                 'type' => ['required', 'in:organization'],
                 'name' => ['required', 'string', 'max:150'],
-                'assignee' => ['nullable', 'string', 'max:150'],
-                'tin' => ['nullable', 'string', 'max:20'],
                 'address_line_1' => ['required', 'string', 'max:150'],
                 'region' => ['required', 'string', 'max:100'],
                 'province' => ['required', 'string', 'max:100'],

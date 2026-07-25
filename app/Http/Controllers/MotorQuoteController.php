@@ -15,6 +15,7 @@ use App\Models\Policy;
 use App\Models\WalletTransaction;
 use App\Services\CtplPremiumCalculator;
 use App\Services\VehicleCatalogService;
+use App\Support\PrintLogo;
 use Carbon\Carbon;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -78,6 +79,11 @@ class MotorQuoteController extends Controller
             'quote' => new MotorQuoteResource($motorQuote),
             'producer' => new ProducerResource($motorQuote->producer),
         ]);
+    }
+
+    public function print(MotorQuoteRequest $request, MotorQuote $motorQuote)
+    {
+        return view('motor-quotes.print', ['quote' => $motorQuote->load('producer'), 'logo' => PrintLogo::dataUri()]);
     }
 
     public function proceed(MotorQuoteRequest $request, MotorQuote $motorQuote): RedirectResponse

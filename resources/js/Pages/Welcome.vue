@@ -41,7 +41,7 @@ const features = [
         <header class="border-b border-gray-200 bg-white/80 backdrop-blur dark:border-gray-800 dark:bg-gray-900/80">
             <div class="mx-auto flex max-w-7xl items-center justify-between px-6 py-4 lg:px-8">
                 <Link href="/" class="flex items-center gap-2">
-                    <ApplicationLogo class="h-8 w-8 text-primary-600 dark:text-primary-400" />
+                    <ApplicationLogo class="h-8 w-8" />
                     <span class="text-lg font-bold tracking-tight">InsurApp</span>
                 </Link>
 

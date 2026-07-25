@@ -10,11 +10,12 @@ import { Link } from '@inertiajs/vue3';
             <div class="absolute inset-0 bg-gradient-to-br from-primary-600 via-primary-700 to-primary-900"></div>
 
             <Link href="/" class="relative z-10 flex items-center gap-2">
-                <ApplicationLogo class="h-9 w-9 text-white" />
+                <ApplicationLogo class="h-9 w-9" />
                 <span class="text-xl font-bold tracking-tight">InsureApp</span>
             </Link>
 
-            <div class="relative z-10 max-w-md">
+            <div class="relative z-10 flex max-w-md flex-col items-center text-center">
+                <ApplicationLogo class="mb-8 h-48 w-48 drop-shadow-xl" />
                 <h2 class="text-3xl font-bold leading-tight">
                     Protecting what matters, one policy at a time.
                 </h2>
@@ -30,7 +31,7 @@ import { Link } from '@inertiajs/vue3';
         <div class="flex w-full flex-col justify-center bg-white px-6 py-12 sm:px-12 lg:w-1/2 lg:px-16">
             <div class="mx-auto w-full max-w-sm">
                 <Link href="/" class="mb-8 flex items-center gap-2 lg:hidden">
-                    <ApplicationLogo class="h-9 w-9 text-primary-600" />
+                    <ApplicationLogo class="h-9 w-9" />
                     <span class="text-xl font-bold tracking-tight text-gray-900">InsureApp</span>
                 </Link>
 

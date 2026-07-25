@@ -19,6 +19,8 @@
 
         <!-- Favicon -->
         <link rel="icon" href="/favicon.ico" sizes="any">
+        <link rel="icon" type="image/png" href="/logo/stronghold_logo.png">
+        <link rel="apple-touch-icon" href="/logo/stronghold_logo.png">
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">

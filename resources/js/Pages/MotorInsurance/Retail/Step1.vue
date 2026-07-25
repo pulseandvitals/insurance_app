@@ -41,6 +41,17 @@ watch(() => form.vehicle_class, () => { form.brand = ''; form.model = ''; form.v
 watch(() => form.brand, () => { form.model = ''; form.variant = ''; });
 watch(() => form.model, () => { form.variant = ''; });
 
+// The CTPL coverage period follows the registration type automatically:
+// New = 3-year term, Renewal = 1-year term.
+watch(
+    () => form.lto_registration_type,
+    (type) => {
+        if (type === 'New') form.coverage_period = '3';
+        else if (type === 'Renewal') form.coverage_period = '1';
+    },
+    { immediate: true },
+);
+
 function findByName(list, name) {
     const needle = (name ?? '').trim().toLowerCase();
     return needle ? list.find((item) => item.name.toLowerCase() === needle) : undefined;
@@ -115,6 +126,8 @@ function submit() {
                             v-model="form.coverage_period"
                             label="CTPL Coverage Period"
                             required
+                            disabled
+                            help="Set automatically based on LTO Registration Type: New = 3 Years, Renewal = 1 Year."
                             :error="form.errors.coverage_period"
                             :options="[{ value: '1', label: '1 Year' }, { value: '3', label: '3 Years' }]"
                         />
