@@ -59,7 +59,7 @@ class MotorQuoteController extends Controller
     public function store(StoreMotorQuoteRequest $request): RedirectResponse
     {
         $data = $request->validated();
-        $premium = $this->calculator->calculate($data['vehicle_class'], (int) $data['coverage_period']);
+        $premium = $this->calculator->calculate($data['vehicle_class'], (int) $data['coverage_period'], $request->user()->producer);
 
         $this->vehicleCatalog->register($data['vehicle_class'], $data['brand'], $data['model'], $data['variant']);
 
@@ -159,7 +159,7 @@ class MotorQuoteController extends Controller
 
         $wallet = $motorQuote->producer->wallet;
 
-        if ($wallet->balance < $motorQuote->total_premium) {
+        if ($wallet->balance < $motorQuote->issuance_price) {
             return back()->with('error', 'Your e-wallet balance is insufficient to complete this purchase. Please reload your wallet.');
         }
 
@@ -175,8 +175,8 @@ class MotorQuoteController extends Controller
             'contract_to' => $motorQuote->expiry_date,
         ]);
 
-        $wallet->decrement('balance', $motorQuote->total_premium);
-        $wallet->increment('total_net_remittance', $motorQuote->total_premium);
+        $wallet->decrement('balance', $motorQuote->issuance_price);
+        $wallet->increment('total_net_remittance', $motorQuote->issuance_price);
 
         WalletTransaction::create([
             'wallet_id' => $wallet->id,
@@ -185,7 +185,7 @@ class MotorQuoteController extends Controller
             'transaction_type' => WalletTransaction::TYPE_PAYMENT_CTPL,
             'reference_label' => 'Policy ID: '.$policy->id,
             'ref_no' => $policy->online_policy_no,
-            'debit' => $motorQuote->total_premium,
+            'debit' => $motorQuote->issuance_price,
             'credit' => 0,
         ]);
 

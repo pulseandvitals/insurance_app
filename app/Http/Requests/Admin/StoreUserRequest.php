@@ -24,6 +24,11 @@ class StoreUserRequest extends FormRequest
             'suffix' => ['nullable', 'string', 'max:20'],
             'address' => ['required', 'string', 'max:255'],
             'phone' => ['required', 'string', 'max:20'],
+            'others_fee' => ['required', 'numeric', 'min:0'],
+            'coc_verification_fee' => ['required', 'numeric', 'min:0'],
+            'motorcycle_price' => ['required', 'numeric', 'min:0'],
+            'pc_suv_price' => ['required', 'numeric', 'min:0'],
+            'cv_truck_price' => ['required', 'numeric', 'min:0'],
         ];
     }
 }

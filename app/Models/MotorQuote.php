@@ -37,6 +37,7 @@ class MotorQuote extends Model
         'coc_verification_fee',
         'other_charges',
         'total_premium',
+        'issuance_price',
         'chassis_no',
         'motor_no',
         'mv_file_no',
@@ -60,6 +61,7 @@ class MotorQuote extends Model
             'coc_verification_fee' => 'decimal:2',
             'other_charges' => 'decimal:2',
             'total_premium' => 'decimal:2',
+            'issuance_price' => 'decimal:2',
             'inception_date' => 'date',
             'expiry_date' => 'date',
         ];

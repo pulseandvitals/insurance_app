@@ -34,6 +34,7 @@ class MotorQuoteResource extends JsonResource
             'coc_verification_fee' => $this->coc_verification_fee,
             'other_charges' => $this->other_charges,
             'total_premium' => $this->total_premium,
+            'issuance_price' => $this->issuance_price,
 
             'chassis_no' => $this->chassis_no,
             'motor_no' => $this->motor_no,

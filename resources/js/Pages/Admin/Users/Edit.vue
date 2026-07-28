@@ -21,6 +21,11 @@ const form = useForm({
     address: props.user.producer.address,
     phone: props.user.producer.phone,
     status: props.user.producer.status,
+    others_fee: props.user.producer.pricing.others_fee,
+    coc_verification_fee: props.user.producer.pricing.coc_verification_fee,
+    motorcycle_price: props.user.producer.pricing.motorcycle_price,
+    pc_suv_price: props.user.producer.pricing.pc_suv_price,
+    cv_truck_price: props.user.producer.pricing.cv_truck_price,
 });
 
 function submit() {
@@ -69,6 +74,19 @@ function submit() {
                         :error="form.errors.branch_id"
                         class="sm:col-span-3"
                     />
+                </div>
+            </Card>
+
+            <Card title="Pricing Configuration">
+                <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
+                    <Input id="others_fee" v-model="form.others_fee" type="number" label="Others Fee" required :error="form.errors.others_fee" />
+                    <Input id="coc_verification_fee" v-model="form.coc_verification_fee" type="number" label="COC Verification" required :error="form.errors.coc_verification_fee" />
+                </div>
+                <p class="mb-1 mt-5 text-sm font-medium text-gray-700 dark:text-gray-300">Issuance Price per Product</p>
+                <div class="grid grid-cols-1 gap-5 sm:grid-cols-3">
+                    <Input id="motorcycle_price" v-model="form.motorcycle_price" type="number" label="Motorcycle" required :error="form.errors.motorcycle_price" />
+                    <Input id="pc_suv_price" v-model="form.pc_suv_price" type="number" label="PC (SUV)" required :error="form.errors.pc_suv_price" />
+                    <Input id="cv_truck_price" v-model="form.cv_truck_price" type="number" label="CV (Trucks)" required :error="form.errors.cv_truck_price" />
                 </div>
             </Card>
 

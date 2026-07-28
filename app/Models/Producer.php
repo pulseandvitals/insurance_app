@@ -49,6 +49,11 @@ class Producer extends Model
         return $this->hasOne(Wallet::class);
     }
 
+    public function pricing(): HasOne
+    {
+        return $this->hasOne(ProducerPricing::class);
+    }
+
     public function deposits(): HasMany
     {
         return $this->hasMany(Deposit::class);

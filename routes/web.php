@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\BranchController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
+use App\Http\Controllers\Admin\PricingController as AdminPricingController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\DepositController;
 use App\Http\Controllers\MotorQuoteController;
@@ -33,6 +34,9 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->name('admin.'
 
     Route::resource('branches', BranchController::class)->except(['show']);
     Route::resource('users', AdminUserController::class)->only(['index', 'create', 'store', 'edit', 'update']);
+
+    Route::get('/pricing', [AdminPricingController::class, 'edit'])->name('pricing.edit');
+    Route::put('/pricing', [AdminPricingController::class, 'update'])->name('pricing.update');
 });
 
 Route::middleware(['auth', 'verified', 'producer'])->group(function () {

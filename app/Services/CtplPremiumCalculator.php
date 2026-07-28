@@ -2,40 +2,60 @@
 
 namespace App\Services;
 
+use App\Models\GlobalPricing;
+use App\Models\Producer;
+
 class CtplPremiumCalculator
 {
     /**
-     * Base annual net premium per vehicle class, in PHP.
+     * Maps the free-form vehicle_class values used on motor quotes to the
+     * 3 pricing categories that Global/Producer pricing is configured by.
+     * Anything not listed (including unrecognized future values) falls
+     * back to 'pc_suv'.
      */
-    private const BASE_RATES = [
-        'Private' => 560.00,
-        'Motorcycles' => 325.00,
-        'Commercial-Trucks' => 730.00,
-        'LTO Tricycle' => 260.00,
-        'LTO Taxi' => 600.00,
-        'LTO Public Utility Jeepney' => 450.00,
-        'LTO Public Utility Bus' => 950.00,
+    private const CATEGORY_MAP = [
+        'Motorcycles' => 'motorcycle',
+        'Private' => 'pc_suv',
+        'Commercial-Trucks' => 'cv_truck',
+        'LTO Tricycle' => 'cv_truck',
+        'LTO Taxi' => 'cv_truck',
+        'LTO Public Utility Jeepney' => 'cv_truck',
+        'LTO Public Utility Bus' => 'cv_truck',
     ];
 
-    public function calculate(string $vehicleClass, int $coveragePeriod): array
+    /**
+     * The configured base rate is the TOTAL policy price (taxes and fees
+     * included), not an amount taxes/fees are added on top of. Net premium
+     * is therefore solved backwards from that total so that:
+     *
+     *   net + (net * taxRate) + fixedFees == totalPremium
+     *
+     * Any sub-centavo rounding residual from rounding each line item to 2
+     * decimals is folded back into net premium so the stored breakdown
+     * always sums to exactly the configured total.
+     */
+    public function calculate(string $vehicleClass, int $coveragePeriod, Producer $producer): array
     {
-        $baseRate = self::BASE_RATES[$vehicleClass] ?? 500.00;
+        $category = self::CATEGORY_MAP[$vehicleClass] ?? 'pc_suv';
+        $global = GlobalPricing::current();
+        $pricing = $producer->pricing;
 
-        // 3-year term carries a small discount versus paying for 3 separate years.
-        $multiplier = $coveragePeriod === 3 ? 2.85 : 1;
-        $netPremium = round($baseRate * $multiplier, 2);
+        $totalPremium = round($global->{"{$category}_base_rate"} * $coveragePeriod, 2);
 
-        $docStampsTax = round(10.00 * $coveragePeriod, 2);
-        $vat = 0.00; // CTPL premiums are VAT-exempt.
-        $localGovtTax = round($netPremium * 0.0075, 2);
-        $ltoDbpDciFee = round(25.00 * $coveragePeriod, 2);
-        $cocVerificationFee = round(40.00 * $coveragePeriod, 2);
-        $otherCharges = 15.00;
+        $ltoDbpDciFee = (float) $global->lto_dbp_dci_fee;
+        $otherCharges = (float) $pricing->others_fee;
+        $cocVerificationFee = (float) $pricing->coc_verification_fee;
+        $fixedFees = $ltoDbpDciFee + $otherCharges + $cocVerificationFee;
 
-        $totalPremium = round(
-            $netPremium + $docStampsTax + $vat + $localGovtTax + $ltoDbpDciFee + $cocVerificationFee + $otherCharges,
-            2,
-        );
+        $taxRate = ($global->doc_stamp_tax_percent + $global->vat_percent + $global->local_govt_tax_percent) / 100;
+
+        $netPremium = round(($totalPremium - $fixedFees) / (1 + $taxRate), 2);
+        $docStampsTax = round($netPremium * $global->doc_stamp_tax_percent / 100, 2);
+        $vat = round($netPremium * $global->vat_percent / 100, 2);
+        $localGovtTax = round($netPremium * $global->local_govt_tax_percent / 100, 2);
+
+        $roundingResidual = $totalPremium - ($netPremium + $docStampsTax + $vat + $localGovtTax + $fixedFees);
+        $netPremium = round($netPremium + $roundingResidual, 2);
 
         return [
             'net_premium' => $netPremium,
@@ -46,6 +66,7 @@ class CtplPremiumCalculator
             'coc_verification_fee' => $cocVerificationFee,
             'other_charges' => $otherCharges,
             'total_premium' => $totalPremium,
+            'issuance_price' => round($pricing->{"{$category}_price"} * $coveragePeriod, 2),
         ];
     }
 }

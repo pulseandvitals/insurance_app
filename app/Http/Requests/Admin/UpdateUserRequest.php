@@ -23,6 +23,11 @@ class UpdateUserRequest extends FormRequest
             'address' => ['required', 'string', 'max:255'],
             'phone' => ['required', 'string', 'max:20'],
             'status' => ['required', 'string', Rule::in(['Active', 'Inactive'])],
+            'others_fee' => ['required', 'numeric', 'min:0'],
+            'coc_verification_fee' => ['required', 'numeric', 'min:0'],
+            'motorcycle_price' => ['required', 'numeric', 'min:0'],
+            'pc_suv_price' => ['required', 'numeric', 'min:0'],
+            'cv_truck_price' => ['required', 'numeric', 'min:0'],
         ];
     }
 }

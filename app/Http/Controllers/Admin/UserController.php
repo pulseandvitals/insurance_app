@@ -64,20 +64,30 @@ class UserController extends Controller
             'first_name', 'middle_name', 'last_name', 'suffix', 'address', 'phone',
         ]));
 
+        $user->producer->pricing->update($request->safe()->only([
+            'others_fee', 'coc_verification_fee', 'motorcycle_price', 'pc_suv_price', 'cv_truck_price',
+        ]));
+
         return redirect()->route('admin.users.index')->with('success', 'Producer account created.');
     }
 
     public function edit(User $user): Response
     {
         return Inertia::render('Admin/Users/Edit', [
-            'user' => $user->load('producer.branch'),
+            'user' => $user->load('producer.branch', 'producer.pricing'),
             'branches' => Branch::orderBy('name')->get(['id', 'code', 'name']),
         ]);
     }
 
     public function update(UpdateUserRequest $request, User $user): RedirectResponse
     {
-        $user->producer->update($request->validated());
+        $user->producer->update($request->safe()->only([
+            'branch_id', 'first_name', 'middle_name', 'last_name', 'suffix', 'address', 'phone', 'status',
+        ]));
+
+        $user->producer->pricing->update($request->safe()->only([
+            'others_fee', 'coc_verification_fee', 'motorcycle_price', 'pc_suv_price', 'cv_truck_price',
+        ]));
 
         return redirect()->route('admin.users.index')->with('success', 'Producer updated.');
     }

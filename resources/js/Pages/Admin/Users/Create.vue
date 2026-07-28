@@ -23,6 +23,11 @@ const form = useForm({
     suffix: '',
     address: '',
     phone: '',
+    others_fee: '10.00',
+    coc_verification_fee: '40.40',
+    motorcycle_price: '160.00',
+    pc_suv_price: '260.00',
+    cv_truck_price: '450.00',
 });
 
 function submit() {
@@ -64,6 +69,19 @@ function submit() {
                         :error="form.errors.branch_id"
                     />
                     <Input id="address" v-model="form.address" label="Address" required :error="form.errors.address" class="sm:col-span-3" />
+                </div>
+            </Card>
+
+            <Card title="Pricing Configuration" subtitle="Defaults to the standard rates below — override per producer if needed.">
+                <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
+                    <Input id="others_fee" v-model="form.others_fee" type="number" label="Others Fee" required :error="form.errors.others_fee" />
+                    <Input id="coc_verification_fee" v-model="form.coc_verification_fee" type="number" label="COC Verification" required :error="form.errors.coc_verification_fee" />
+                </div>
+                <p class="mb-1 mt-5 text-sm font-medium text-gray-700 dark:text-gray-300">Issuance Price per Product</p>
+                <div class="grid grid-cols-1 gap-5 sm:grid-cols-3">
+                    <Input id="motorcycle_price" v-model="form.motorcycle_price" type="number" label="Motorcycle" required :error="form.errors.motorcycle_price" />
+                    <Input id="pc_suv_price" v-model="form.pc_suv_price" type="number" label="PC (SUV)" required :error="form.errors.pc_suv_price" />
+                    <Input id="cv_truck_price" v-model="form.cv_truck_price" type="number" label="CV (Trucks)" required :error="form.errors.cv_truck_price" />
                 </div>
             </Card>
 

@@ -29,7 +29,7 @@ function pay() {
 }
 
 const insufficientFunds =
-    Number(props.wallet.balance) < Number(props.quote.total_premium);
+    Number(props.wallet.balance) < Number(props.quote.issuance_price);
 </script>
 
 <template>
@@ -82,6 +82,14 @@ const insufficientFunds =
                         >
                     </div>
                 </div>
+
+                <div class="mt-4 flex justify-between gap-4 rounded-lg bg-primary-50 px-4 py-3 text-base font-bold dark:bg-primary-950/40">
+                    <span class="shrink-0 text-primary-700 dark:text-primary-300">e-Wallet Deduction</span>
+                    <span class="text-right text-primary-700 dark:text-primary-300">{{ peso(quote.issuance_price) }}</span>
+                </div>
+                <p class="mt-1.5 text-xs text-gray-400">
+                    Only the issuance price configured for this product is deducted from your e-wallet — not the total premium above.
+                </p>
 
                 <Banner
                     v-if="insufficientFunds"

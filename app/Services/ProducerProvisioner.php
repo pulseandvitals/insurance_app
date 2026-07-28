@@ -8,6 +8,7 @@ use App\Models\MotorQuote;
 use App\Models\Policy;
 use App\Models\Policyholder;
 use App\Models\Producer;
+use App\Models\ProducerPricing;
 use App\Models\User;
 use App\Models\Wallet;
 use App\Models\WalletTransaction;
@@ -51,6 +52,8 @@ class ProducerProvisioner
             'total_net_remittance' => 0,
             'total_received' => 0,
         ]);
+
+        ProducerPricing::create(['producer_id' => $producer->id]);
 
         $this->seedDeposits($producer, $wallet);
         $this->seedMotorHistory($producer, $wallet);
@@ -132,7 +135,7 @@ class ProducerProvisioner
         ];
 
         foreach ($samples as [$vehicleClass, $year, $brand, $model, $variant, $plate, $status]) {
-            $premium = $this->calculator->calculate($vehicleClass, 1);
+            $premium = $this->calculator->calculate($vehicleClass, 1, $producer);
             $createdAt = now()->subDays(random_int(1, 18));
 
             $quote = MotorQuote::create([
@@ -191,8 +194,8 @@ class ProducerProvisioner
                 'updated_at' => $createdAt,
             ]);
 
-            $wallet->decrement('balance', $premium['total_premium']);
-            $wallet->increment('total_net_remittance', $premium['total_premium']);
+            $wallet->decrement('balance', $premium['issuance_price']);
+            $wallet->increment('total_net_remittance', $premium['issuance_price']);
 
             WalletTransaction::create([
                 'wallet_id' => $wallet->id,
@@ -201,7 +204,7 @@ class ProducerProvisioner
                 'transaction_type' => WalletTransaction::TYPE_PAYMENT_CTPL,
                 'reference_label' => 'Policy ID: '.$policy->id,
                 'ref_no' => $policy->online_policy_no,
-                'debit' => $premium['total_premium'],
+                'debit' => $premium['issuance_price'],
                 'credit' => 0,
                 'created_at' => $createdAt,
                 'updated_at' => $createdAt,
