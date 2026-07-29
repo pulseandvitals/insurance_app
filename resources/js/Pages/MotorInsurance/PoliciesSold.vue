@@ -7,9 +7,11 @@ import Card from '@/Components/UI/Card.vue';
 import Button from '@/Components/UI/Button.vue';
 import Select from '@/Components/UI/Select.vue';
 import Input from '@/Components/UI/Input.vue';
+import Banner from '@/Components/UI/Banner.vue';
+import Pagination from '@/Components/UI/Pagination.vue';
 
 const props = defineProps({
-    policies: Array,
+    policies: Object,
     filters: Object,
 });
 
@@ -38,9 +40,6 @@ function daysBeforeExpiration(contractTo) {
     <AuthenticatedLayout>
         <template #header>
             <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100">Online Policies Sold</h2>
-            <p class="mt-1 text-xs font-medium uppercase tracking-wide text-gray-400">
-                (Policies shown here are limited to latest 30 days encoded.)
-            </p>
         </template>
 
         <div class="mx-auto max-w-5xl space-y-6 px-4 py-8 sm:px-6 lg:px-8">
@@ -56,10 +55,13 @@ function daysBeforeExpiration(contractTo) {
                 <div class="mt-4 flex justify-end">
                     <Button @click="search"><Search class="h-4 w-4" />Search</Button>
                 </div>
+                <Banner variant="warning" class="mt-4">
+                    (Policies shown here are limited to latest 30 days encoded.)
+                </Banner>
             </Card>
 
             <div class="space-y-3">
-                <Card v-for="policy in policies" :key="policy.id">
+                <Card v-for="policy in policies.data" :key="policy.id">
                     <div class="flex flex-col justify-between gap-4 sm:flex-row">
                         <div class="min-w-0 space-y-1">
                             <Link :href="route('policies.show', policy.id)" class="font-semibold text-primary-600 hover:underline dark:text-primary-400">
@@ -84,10 +86,12 @@ function daysBeforeExpiration(contractTo) {
                     </div>
                 </Card>
 
-                <div v-if="policies.length === 0" class="flex flex-col items-center gap-2 rounded-xl border border-dashed border-gray-300 py-10 text-center text-sm text-gray-400 dark:border-gray-700">
+                <div v-if="policies.data.length === 0" class="flex flex-col items-center gap-2 rounded-xl border border-dashed border-gray-300 py-10 text-center text-sm text-gray-400 dark:border-gray-700">
                     <Inbox class="h-8 w-8 text-gray-300 dark:text-gray-600" />
                     No policies found for the selected filters.
                 </div>
+
+                <Pagination :paginator="policies" />
             </div>
         </div>
     </AuthenticatedLayout>

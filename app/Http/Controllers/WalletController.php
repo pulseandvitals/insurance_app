@@ -7,6 +7,7 @@ use App\Http\Requests\Wallet\WalletFilterRequest;
 use App\Http\Resources\WalletResource;
 use App\Http\Resources\WalletTransactionResource;
 use App\Models\Deposit;
+use App\Models\WalletTransaction;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
@@ -26,11 +27,14 @@ class WalletController extends Controller
             ->when($dateFrom, fn ($q) => $q->whereDate('created_at', '>=', $dateFrom))
             ->when($dateTo, fn ($q) => $q->whereDate('created_at', '<=', $dateTo))
             ->latest()
-            ->get();
+            ->paginate(8)
+            ->withQueryString();
+
+        $transactions->through(fn (WalletTransaction $transaction) => new WalletTransactionResource($transaction));
 
         return Inertia::render('Producers/Wallet', [
             'wallet' => new WalletResource($wallet),
-            'transactions' => WalletTransactionResource::collection($transactions),
+            'transactions' => $transactions,
             'walletHandle' => $producer->wallet_handle,
             'filters' => $request->only(['date_from', 'date_to']),
         ]);

@@ -42,10 +42,13 @@ class PolicyController extends Controller
             ->when(($filters['direct_status'] ?? null) === 'Yes', fn ($q) => $q->where('is_direct', true))
             ->when(($filters['direct_status'] ?? null) === 'No', fn ($q) => $q->where('is_direct', false))
             ->latest()
-            ->get();
+            ->paginate(10)
+            ->withQueryString();
+
+        $policies->through(fn (Policy $policy) => new PolicyResource($policy));
 
         return Inertia::render('MotorInsurance/PoliciesSold', [
-            'policies' => PolicyResource::collection($policies),
+            'policies' => $policies,
             'filters' => $filters,
         ]);
     }

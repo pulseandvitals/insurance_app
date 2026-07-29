@@ -8,9 +8,10 @@ import Badge from '@/Components/UI/Badge.vue';
 import Button from '@/Components/UI/Button.vue';
 import Select from '@/Components/UI/Select.vue';
 import Input from '@/Components/UI/Input.vue';
+import Pagination from '@/Components/UI/Pagination.vue';
 
 const props = defineProps({
-    quotes: Array,
+    quotes: Object,
     filters: Object,
 });
 
@@ -52,7 +53,7 @@ function search() {
             </Card>
 
             <div class="space-y-3">
-                <Card v-for="quote in quotes" :key="quote.id" :padded="true">
+                <Card v-for="quote in quotes.data" :key="quote.id" :padded="true">
                     <div class="flex flex-col justify-between gap-3 sm:flex-row sm:items-center">
                         <div class="min-w-0">
                             <div class="flex items-center gap-2">
@@ -72,10 +73,12 @@ function search() {
                     </div>
                 </Card>
 
-                <div v-if="quotes.length === 0" class="flex flex-col items-center gap-2 rounded-xl border border-dashed border-gray-300 py-10 text-center text-sm text-gray-400 dark:border-gray-700">
+                <div v-if="quotes.data.length === 0" class="flex flex-col items-center gap-2 rounded-xl border border-dashed border-gray-300 py-10 text-center text-sm text-gray-400 dark:border-gray-700">
                     <Inbox class="h-8 w-8 text-gray-300 dark:text-gray-600" />
                     No quotations found.
                 </div>
+
+                <Pagination :paginator="quotes" />
             </div>
         </div>
     </AuthenticatedLayout>

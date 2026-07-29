@@ -18,10 +18,11 @@ class DepositController extends Controller
     {
         $producer = $request->user()->producer;
 
-        $deposits = $producer->deposits()->latest()->get();
+        $deposits = $producer->deposits()->latest()->paginate(8)->withQueryString();
+        $deposits->through(fn (Deposit $deposit) => new DepositResource($deposit));
 
         return Inertia::render('Deposits/Index', [
-            'deposits' => DepositResource::collection($deposits),
+            'deposits' => $deposits,
             'walletHandle' => $producer->wallet_handle,
         ]);
     }

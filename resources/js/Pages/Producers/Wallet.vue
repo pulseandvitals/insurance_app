@@ -9,10 +9,11 @@ import Input from '@/Components/UI/Input.vue';
 import Select from '@/Components/UI/Select.vue';
 import Modal from '@/Components/UI/Modal.vue';
 import Banner from '@/Components/UI/Banner.vue';
+import Pagination from '@/Components/UI/Pagination.vue';
 
 const props = defineProps({
     wallet: Object,
-    transactions: Array,
+    transactions: Object,
     walletHandle: String,
     filters: Object,
 });
@@ -98,7 +99,7 @@ function peso(value) {
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
-                            <tr v-for="tx in transactions" :key="tx.id" class="transition-colors hover:bg-gray-50 dark:hover:bg-gray-700/30">
+                            <tr v-for="tx in transactions.data" :key="tx.id" class="transition-colors hover:bg-gray-50 dark:hover:bg-gray-700/30">
                                 <td class="px-5 py-3 font-mono text-xs text-gray-500 dark:text-gray-400">{{ tx.id }}</td>
                                 <td class="px-5 py-3 text-gray-700 dark:text-gray-200">{{ tx.from_handle }}</td>
                                 <td class="px-5 py-3 text-gray-700 dark:text-gray-200">{{ tx.to_handle ?? '—' }}</td>
@@ -112,7 +113,7 @@ function peso(value) {
                                     {{ new Date(tx.created_at).toLocaleString('en-PH', { dateStyle: 'medium', timeStyle: 'short' }) }}
                                 </td>
                             </tr>
-                            <tr v-if="transactions.length === 0">
+                            <tr v-if="transactions.data.length === 0">
                                 <td colspan="7" class="px-5 py-10 text-center text-sm text-gray-400">
                                     <div class="flex flex-col items-center gap-2">
                                         <Inbox class="h-8 w-8 text-gray-300 dark:text-gray-600" />
@@ -124,6 +125,8 @@ function peso(value) {
                     </table>
                 </div>
             </Card>
+
+            <Pagination :paginator="transactions" />
         </div>
 
         <Modal :show="showDepositModal" title="Deposit Ewallet" @close="showDepositModal = false">

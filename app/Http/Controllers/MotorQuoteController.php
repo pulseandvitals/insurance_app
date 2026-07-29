@@ -39,10 +39,13 @@ class MotorQuoteController extends Controller
             ->when($request->filled('quote_ref'), fn ($q) => $q->where('quote_ref', 'like', '%'.$request->validated('quote_ref').'%'))
             ->latest()
             ->with('policy')
-            ->get();
+            ->paginate(10)
+            ->withQueryString();
+
+        $quotes->through(fn (MotorQuote $quote) => new MotorQuoteResource($quote));
 
         return Inertia::render('MotorInsurance/Quotations', [
-            'quotes' => MotorQuoteResource::collection($quotes),
+            'quotes' => $quotes,
             'filters' => $request->validated(),
         ]);
     }

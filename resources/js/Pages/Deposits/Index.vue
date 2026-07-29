@@ -8,9 +8,10 @@ import Badge from '@/Components/UI/Badge.vue';
 import Button from '@/Components/UI/Button.vue';
 import Modal from '@/Components/UI/Modal.vue';
 import Input from '@/Components/UI/Input.vue';
+import Pagination from '@/Components/UI/Pagination.vue';
 
 const props = defineProps({
-    deposits: Array,
+    deposits: Object,
     walletHandle: String,
 });
 
@@ -76,7 +77,7 @@ function peso(value) {
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
-                            <tr v-for="deposit in deposits" :key="deposit.id" :class="rowClass(deposit)" class="transition-colors hover:bg-gray-100/70 dark:hover:bg-gray-700/30">
+                            <tr v-for="deposit in deposits.data" :key="deposit.id" :class="rowClass(deposit)" class="transition-colors hover:bg-gray-100/70 dark:hover:bg-gray-700/30">
                                 <td class="px-5 py-3 font-mono text-xs text-gray-500 dark:text-gray-400">{{ deposit.id }}</td>
                                 <td class="px-5 py-3 text-gray-700 dark:text-gray-200">{{ deposit.ref_no }}</td>
                                 <td class="px-5 py-3 text-gray-700 dark:text-gray-200">{{ walletHandle }}</td>
@@ -95,7 +96,7 @@ function peso(value) {
                                     </div>
                                 </td>
                             </tr>
-                            <tr v-if="deposits.length === 0">
+                            <tr v-if="deposits.data.length === 0">
                                 <td colspan="9" class="px-5 py-10 text-center text-sm text-gray-400">
                                     <div class="flex flex-col items-center gap-2">
                                         <Inbox class="h-8 w-8 text-gray-300 dark:text-gray-600" />
@@ -107,6 +108,8 @@ function peso(value) {
                     </table>
                 </div>
             </Card>
+
+            <Pagination :paginator="deposits" />
         </div>
 
         <!-- View modal -->
