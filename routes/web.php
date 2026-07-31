@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\BranchController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
+use App\Http\Controllers\Admin\ErrorLogController;
 use App\Http\Controllers\Admin\PricingController as AdminPricingController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\DepositController;
@@ -37,6 +38,12 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->name('admin.'
 
     Route::get('/pricing', [AdminPricingController::class, 'edit'])->name('pricing.edit');
     Route::put('/pricing', [AdminPricingController::class, 'update'])->name('pricing.update');
+
+    Route::middleware('role:dev')->prefix('dev')->name('dev.')->group(function () {
+        Route::get('/errors', [ErrorLogController::class, 'index'])->name('errors.index');
+        Route::get('/errors/{errorLog}', [ErrorLogController::class, 'show'])->name('errors.show');
+        Route::delete('/errors/{errorLog}', [ErrorLogController::class, 'destroy'])->name('errors.destroy');
+    });
 });
 
 Route::middleware(['auth', 'verified', 'producer'])->group(function () {

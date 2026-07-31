@@ -37,6 +37,7 @@ class HandleInertiaRequests extends Middleware
                 'user' => $user,
                 'producer' => $user?->producer,
                 'isSuperAdmin' => $user?->isSuperAdmin() ?? false,
+                'isDev' => $user?->isDev() ?? false,
             ],
             'flash' => [
                 'success' => fn () => $request->session()->get('success'),

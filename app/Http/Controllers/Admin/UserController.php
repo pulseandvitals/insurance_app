@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\StoreUserRequest;
 use App\Http\Requests\Admin\UpdateUserRequest;
 use App\Models\Branch;
+use App\Models\Role;
 use App\Models\User;
 use App\Services\ProducerProvisioner;
 use Illuminate\Http\RedirectResponse;
@@ -19,7 +20,7 @@ class UserController extends Controller
     public function index(Request $request): Response
     {
         $users = User::query()
-            ->where('role', User::ROLE_PRODUCER)
+            ->whereHas('roles', fn ($q) => $q->where('name', User::ROLE_PRODUCER))
             ->with('producer.branch')
             ->when($request->string('search')->toString(), function ($query, $search) {
                 $query->where(function ($query) use ($search) {
@@ -53,9 +54,10 @@ class UserController extends Controller
             'name' => $request->validated('name'),
             'email' => $request->validated('email'),
             'password' => Hash::make($request->validated('password')),
-            'role' => User::ROLE_PRODUCER,
             'email_verified_at' => now(),
         ]);
+
+        $user->roles()->attach(Role::where('name', User::ROLE_PRODUCER)->first());
 
         $branch = Branch::findOrFail($request->validated('branch_id'));
         $provisioner->provision($user, $branch);

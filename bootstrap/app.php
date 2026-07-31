@@ -1,5 +1,6 @@
 <?php
 
+use App\Services\ErrorLogRecorder;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -20,6 +21,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'producer' => \App\Http\Middleware\EnsureProducerProvisioned::class,
             'admin' => \App\Http\Middleware\EnsureIsSuperAdmin::class,
+            'role' => \App\Http\Middleware\EnsureHasRole::class,
         ]);
 
         //
@@ -28,4 +30,8 @@ return Application::configure(basePath: dirname(__DIR__))
         $exceptions->shouldRenderJsonWhen(
             fn (Request $request) => $request->is('api/*'),
         );
+
+        $exceptions->report(function (Throwable $e) {
+            app(ErrorLogRecorder::class)->record($e);
+        });
     })->create();

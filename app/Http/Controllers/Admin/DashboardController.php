@@ -14,7 +14,7 @@ class DashboardController extends Controller
     {
         return Inertia::render('Admin/Dashboard', [
             'stats' => [
-                'producers_count' => User::where('role', User::ROLE_PRODUCER)->count(),
+                'producers_count' => User::whereHas('roles', fn ($q) => $q->where('name', User::ROLE_PRODUCER))->count(),
                 'branches_count' => Branch::count(),
             ],
         ]);

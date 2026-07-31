@@ -7,18 +7,21 @@ use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-#[Fillable(['name', 'email', 'password', 'role'])]
+#[Fillable(['name', 'email', 'password'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable;
 
-    public const ROLE_SUPER_ADMIN = 'super_admin';
+    public const ROLE_ADMIN = 'admin';
+
+    public const ROLE_DEV = 'dev';
 
     public const ROLE_PRODUCER = 'producer';
 
@@ -40,8 +43,25 @@ class User extends Authenticatable
         return $this->hasOne(Producer::class);
     }
 
+    public function roles(): BelongsToMany
+    {
+        return $this->belongsToMany(Role::class);
+    }
+
+    public function hasRole(string $role): bool
+    {
+        return $this->relationLoaded('roles')
+            ? $this->roles->contains('name', $role)
+            : $this->roles()->where('name', $role)->exists();
+    }
+
     public function isSuperAdmin(): bool
     {
-        return $this->role === self::ROLE_SUPER_ADMIN;
+        return $this->hasRole(self::ROLE_ADMIN);
+    }
+
+    public function isDev(): bool
+    {
+        return $this->hasRole(self::ROLE_DEV);
     }
 }

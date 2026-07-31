@@ -1,0 +1,28 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+
+class ErrorLog extends Model
+{
+    protected $fillable = [
+        'method',
+        'url',
+        'route_name',
+        'status_code',
+        'exception_class',
+        'message',
+        'file',
+        'line',
+        'trace',
+        'user_id',
+        'ip',
+    ];
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
+}

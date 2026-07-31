@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Models\Role;
 use App\Models\User;
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
@@ -32,13 +33,14 @@ class CreateSuperAdminCommand extends Command
             return self::FAILURE;
         }
 
-        User::create([
+        $user = User::create([
             'name' => $this->argument('name'),
             'email' => $this->argument('email'),
             'password' => Hash::make($this->argument('password')),
-            'role' => User::ROLE_SUPER_ADMIN,
             'email_verified_at' => now(),
         ]);
+
+        $user->roles()->attach(Role::where('name', User::ROLE_ADMIN)->first());
 
         $this->info('Super admin created: '.$this->argument('email'));
 
