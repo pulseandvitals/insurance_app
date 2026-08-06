@@ -8,7 +8,7 @@ class DepositRequest extends WalletRequest
     {
         return [
             'amount' => ['required', 'numeric', 'min:100'],
-            'payment_method' => ['required', 'in:Pay with Credit/Debit Card,GCash,GrabPay,Pay Through Bills Payment'],
+            'payment_method' => ['required', 'in:Online Payment,Pay Through Bills Payment'],
         ];
     }
 }

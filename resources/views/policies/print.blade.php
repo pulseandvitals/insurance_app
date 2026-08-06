@@ -29,14 +29,22 @@
         .footer-note { margin-top: 16px; font-size: 10px; color: #888; }
 
         /* Certificate of Cover — modeled on the physical Stronghold COC form */
+        /* NOTE: this block intentionally avoids flexbox — dompdf (used for the PDF
+           download) does not lay out `display:flex` the same way browsers do, so
+           every side-by-side region here is built with plain tables instead, which
+           render identically in both the browser print view and the PDF export. */
         .coc-doc { font-size: 11px; }
-        .coc-doc .coc-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; }
-        .coc-doc .coc-company { display: flex; align-items: center; gap: 10px; border: 2px solid #111; padding: 8px 12px; width: 58%; }
-        .coc-doc .coc-company img { width: 56px; height: 56px; object-fit: contain; flex-shrink: 0; }
+        .coc-doc table.coc-header-table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+        .coc-doc table.coc-header-table td { border: none; padding: 0; vertical-align: top; }
+        .coc-doc .coc-company-cell { width: 58%; padding-right: 16px; }
+        .coc-doc .coc-doctitle-cell { width: 42%; text-align: center; }
+        .coc-doc table.coc-company-inner { width: 100%; border: 2px solid #111; border-collapse: collapse; }
+        .coc-doc table.coc-company-inner td { border: none; padding: 8px 12px; vertical-align: middle; }
+        .coc-doc .coc-logo-cell { width: 56px; }
+        .coc-doc .coc-logo-cell img { width: 56px; height: 56px; object-fit: contain; }
         .coc-doc .coc-company h1 { margin: 0; font-size: 19px; letter-spacing: 0.03em; }
         .coc-doc .coc-company p { margin: 1px 0 0; font-size: 9px; color: #333; }
         .coc-doc .coc-company p.tagline { font-weight: bold; font-size: 11px; margin-top: 2px; }
-        .coc-doc .coc-doctitle { width: 40%; text-align: center; }
         .coc-doc .coc-doctitle .original { font-size: 19px; font-weight: bold; margin: 0 0 4px; }
         .coc-doc .coc-doctitle h2 { margin: 0; font-size: 15px; text-transform: uppercase; }
         .coc-doc .coc-doctitle h3 { margin: 3px 0 0; font-size: 10px; font-weight: normal; text-transform: uppercase; line-height: 1.4; }
@@ -64,9 +72,12 @@
         .coc-doc .amount-row .amt-label .amt-sub { display: block; font-weight: normal; font-size: 8.5px; }
         .coc-doc .amount-row .amt-value { display: inline-block; width: 40%; vertical-align: middle; text-align: right; font-size: 15px; font-weight: bold; }
 
-        .coc-doc .coc-footer { margin-top: 14px; display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; }
-        .coc-doc .coc-footer .legal { width: 62%; font-size: 9px; line-height: 1.5; }
-        .coc-doc .signature-line { width: 32%; text-align: center; border-top: 1px solid #111; padding-top: 4px; font-size: 9px; }
+        .coc-doc table.coc-footer-table { width: 100%; border-collapse: collapse; margin-top: 14px; table-layout: fixed; }
+        .coc-doc table.coc-footer-table td { border: none; padding: 0; vertical-align: bottom; }
+        .coc-doc .coc-footer-legal-cell { width: 62%; padding-right: 16px; }
+        .coc-doc .coc-footer-sign-cell { width: 38%; }
+        .coc-doc .coc-footer .legal { font-size: 9px; line-height: 1.5; }
+        .coc-doc .signature-line { width: 100%; text-align: center; border-top: 1px solid #111; padding-top: 4px; font-size: 9px; }
 
         /* Policy Schedule — modern recreation of the physical Stronghold policy schedule form */
         .schedule-doc { font-size: 11px; }
@@ -117,24 +128,32 @@
 <body onload="window.print()">
     @if ($mode === 'coc')
         <div class="coc-doc">
-            <div class="coc-header">
-                <div class="coc-company">
-                    <img src="{{ $logo }}" alt="Stronghold">
-                    <div>
-                        <h1>STRONGHOLD</h1>
-                        <p class="tagline">INSURANCE COMPANY, INCORPORATED</p>
-                        <p>17th Floor, Security Bank Centre, 6776 Ayala Avenue, Makati City, Philippines</p>
-                        <p>Tel. Nos.: 8891-1329 to 37 &bull; Fax Nos. 8891-1640; 8891-1326; 8891-1383</p>
-                        <p>TIN: 000-602-270-00000 VAT</p>
-                    </div>
-                </div>
-                <div class="coc-doctitle">
-                    <p class="original">&ldquo;ORIGINAL COPY&rdquo;</p>
-                    <h2>Confirmation of Cover</h2>
-                    <h3>Non-Land Transportation Operators<br>Vehicle</h3>
-                    <p class="coc-number">No. {{ $policy->coc_no }}</p>
-                </div>
-            </div>
+            <table class="coc-header-table">
+                <tr>
+                    <td class="coc-company-cell">
+                        <table class="coc-company-inner">
+                            <tr>
+                                <td class="coc-logo-cell"><img src="{{ $logo }}" alt="Stronghold"></td>
+                                <td class="coc-company">
+                                    <h1>STRONGHOLD</h1>
+                                    <p class="tagline">INSURANCE COMPANY, INCORPORATED</p>
+                                    <p>17th Floor, Security Bank Centre, 6776 Ayala Avenue, Makati City, Philippines</p>
+                                    <p>Tel. Nos.: 8891-1329 to 37 &bull; Fax Nos. 8891-1640; 8891-1326; 8891-1383</p>
+                                    <p>TIN: 000-602-270-00000 VAT</p>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                    <td class="coc-doctitle-cell">
+                        <div class="coc-doctitle">
+                            <p class="original">&ldquo;ORIGINAL COPY&rdquo;</p>
+                            <h2>Confirmation of Cover</h2>
+                            <h3>Non-Land Transportation Operators<br>Vehicle</h3>
+                            <p class="coc-number">No. {{ $policy->coc_no }}</p>
+                        </div>
+                    </td>
+                </tr>
+            </table>
 
             <div class="coc-policyno"><label>Policy No.</label><span>{{ $policy->online_policy_no }}</span></div>
 
@@ -144,13 +163,19 @@
 
             @include('policies.partials.liability-box', ['policy' => $policy])
 
-            <div class="coc-footer">
-                <p class="legal">
-                    This Confirmation of Cover is evidence of the policy of insurance required under Chapter VI &ndash;
-                    Compulsory Motor Vehicle Liability Insurance, of the Insurance Code, as amended by Presidential Decree No. 1814.
-                </p>
-                <div class="signature-line">Authorized Signature</div>
-            </div>
+            <table class="coc-footer-table">
+                <tr>
+                    <td class="coc-footer-legal-cell coc-footer">
+                        <p class="legal">
+                            This Confirmation of Cover is evidence of the policy of insurance required under Chapter VI &ndash;
+                            Compulsory Motor Vehicle Liability Insurance, of the Insurance Code, as amended by Presidential Decree No. 1814.
+                        </p>
+                    </td>
+                    <td class="coc-footer-sign-cell">
+                        <div class="signature-line">Authorized Signature</div>
+                    </td>
+                </tr>
+            </table>
         </div>
     @elseif ($mode === 'schedule')
         @php

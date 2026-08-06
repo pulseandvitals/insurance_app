@@ -45,9 +45,7 @@ class WalletController extends Controller
         $producer = $request->user()->producer;
 
         $depositTypeMap = [
-            'Pay with Credit/Debit Card' => 'Credit/Debit Card',
-            'GCash' => 'GCash',
-            'GrabPay' => 'Grab Pay',
+            'Online Payment' => 'Online Payment',
             'Pay Through Bills Payment' => 'Payment via Bills Payment',
         ];
 

@@ -57,6 +57,7 @@ Route::middleware(['auth', 'verified', 'producer'])->group(function () {
     // Deposits (topups)
     Route::get('/topups', [DepositController::class, 'index'])->name('topups.index');
     Route::post('/topups/{deposit}/pay', [DepositController::class, 'pay'])->name('topups.pay');
+    Route::get('/topups/{deposit}/callback', [DepositController::class, 'callback'])->name('topups.callback');
     Route::post('/topups/{deposit}/upload', [DepositController::class, 'upload'])->name('topups.upload');
 
     // Motor CTPL — OCR & Renewal (fixed paths, must be registered before the {motor_quote} wildcard group)

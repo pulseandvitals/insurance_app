@@ -21,6 +21,8 @@ class Deposit extends Model
         'approved_by',
         'approved_date',
         'proof_path',
+        'paymongo_checkout_session_id',
+        'paymongo_payment_intent_id',
     ];
 
     protected function casts(): array

@@ -145,7 +145,10 @@ function peso(value) {
                     label="Payment Method"
                     required
                     :error="depositForm.errors.payment_method"
-                    :options="['Pay with Credit/Debit Card', 'GCash', 'GrabPay', 'Pay Through Bills Payment']"
+                    :options="[
+                        { value: 'Online Payment', label: 'Online Payment (GCash / Maya / QR Ph)' },
+                        { value: 'Pay Through Bills Payment', label: 'Pay Through Bills Payment' },
+                    ]"
                 />
             </div>
 
