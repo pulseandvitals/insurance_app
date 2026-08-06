@@ -13,7 +13,7 @@ class CtplPremiumCalculator
      * Anything not listed (including unrecognized future values) falls
      * back to 'pc_suv'.
      */
-    private const CATEGORY_MAP = [
+    public const CATEGORY_MAP = [
         'Motorcycles' => 'motorcycle',
         'Private' => 'pc_suv',
         'Commercial-Trucks' => 'cv_truck',

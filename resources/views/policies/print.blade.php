@@ -84,7 +84,9 @@
 
         .schedule-doc .section-bar.small { font-size: 10px; padding: 3px; margin-top: 14px; border-radius: 3px; }
         .schedule-doc .not-covered { color: #9aa4b2; font-style: italic; font-weight: 500 !important; }
+        .schedule-doc .not-covered.stacked { display: block; margin-top: 1px; }
         .schedule-doc .not-applicable { text-align: center; font-style: italic; color: #9aa4b2; padding: 8px; border: 1px solid #111; border-top: none; margin: -1px 0 0; font-size: 11px; }
+        .schedule-doc .blank-box { border: 1px solid #111; border-top: none; min-height: 42px; margin: -1px 0 0; }
 
         .schedule-doc .sched-columns { display: flex; gap: 14px; margin-top: 14px; align-items: flex-start; }
         .schedule-doc .sched-col-left { width: 56%; }
@@ -96,15 +98,20 @@
         .schedule-doc .premium-card .row.sub { padding-left: 20px; color: #555; font-size: 10.5px; }
         .schedule-doc .premium-card .row.group-label { padding-bottom: 0; font-weight: 600; color: #333; }
         .schedule-doc .premium-card .row.total { border-top: 2px solid #184f95; background: #eef3fb; font-weight: bold; font-size: 12.5px; color: #184f95; padding: 8px 12px; }
+        .schedule-doc .premium-card .dash { color: #b8c0cd; font-weight: 400; }
 
         .schedule-doc .legal-block { margin-top: 16px; font-size: 9.5px; line-height: 1.6; color: #333; }
         .schedule-doc .legal-block p { margin: 0 0 8px; }
-        .schedule-doc .legal-block strong { color: #111; }
+        .schedule-doc .legal-block strong { color: #184f95; text-transform: uppercase; font-size: 10px; }
         .schedule-doc .legal-block ol { margin: 4px 0 8px 18px; padding: 0; }
 
-        .schedule-doc .sched-signoff { margin-top: 16px; display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; }
-        .schedule-doc .sched-signoff p { width: 62%; font-size: 9.5px; line-height: 1.5; margin: 0; }
-        .schedule-doc .sched-signoff .signature-line { width: 32%; text-align: center; border-top: 1px solid #111; padding-top: 4px; font-size: 9px; }
+        .schedule-doc .sched-footer-grid { margin-top: 16px; display: flex; gap: 20px; align-items: flex-start; }
+        .schedule-doc .sched-footer-grid .notice-col { width: 64%; font-size: 8.5px; line-height: 1.5; color: #444; }
+        .schedule-doc .sched-footer-grid .notice-col p { margin: 0 0 6px; }
+        .schedule-doc .sched-footer-grid .notice-col .important { font-weight: bold; text-align: center; font-size: 9.5px; color: #184f95; text-transform: uppercase; letter-spacing: 0.03em; margin: 8px 0 4px; }
+        .schedule-doc .sched-footer-grid .sign-col { width: 36%; text-align: center; padding-top: 34px; }
+        .schedule-doc .sched-footer-grid .sign-col .sign-line { width: 100%; margin: 0; border-top: 1px solid #111; padding-top: 4px; font-size: 9px; }
+        .schedule-doc .sched-footer-grid .sign-col .role { margin: 2px 0 0; font-size: 9px; color: #555; }
     </style>
 </head>
 <body onload="window.print()">
@@ -146,6 +153,20 @@
             </div>
         </div>
     @elseif ($mode === 'schedule')
+        @php
+            $scheduleTitles = [
+                'Private' => 'Private Car Policy',
+                'Motorcycles' => 'Motorcycle Policy',
+                'Commercial-Trucks' => 'Commercial Vehicle Policy',
+                'LTO Tricycle' => 'Tricycle Policy',
+                'LTO Taxi' => 'Taxi Policy',
+                'LTO Public Utility Jeepney' => 'Public Utility Jeepney Policy',
+                'LTO Public Utility Bus' => 'Public Utility Bus Policy',
+            ];
+            $scheduleTitle = $scheduleTitles[$policy->motorQuote->vehicle_class] ?? 'Motor Vehicle Policy';
+            $basePremium = $policy->motorQuote->net_premium + $policy->motorQuote->lto_dbp_dci_fee
+                + $policy->motorQuote->coc_verification_fee + $policy->motorQuote->other_charges;
+        @endphp
         <div class="coc-doc schedule-doc">
             <div class="sched-header">
                 <div class="sched-company">
@@ -153,32 +174,83 @@
                     <div>
                         <h1>STRONGHOLD</h1>
                         <p class="tagline">INSURANCE COMPANY, INCORPORATED</p>
-                        <p>17th Floor, Security Bank Centre, 6776 Ayala Avenue, Makati City, Philippines</p>
-                        <p>Tel. Nos.: 8891-1329 to 37 &bull; Fax Nos. 8891-1640; 8891-1326; 8891-1383</p>
+                        <p>17th Floor, Security Bank Centre 6776 Ayala Avenue, Makati City</p>
+                        <p>Tel. Nos. 8891-1329 to 37 &bull; Fax Nos. 8891-1640; 8891-1326; 8891-1383</p>
+                        <p>TIN -000-602-270-VAT</p>
                     </div>
                 </div>
                 <div class="sched-doctitle">
-                    <h2>Policy Schedule</h2>
-                    <p class="vehicle-tag">{{ $policy->motorQuote->vehicle_class }} &bull; CTPL</p>
+                    <h2>{{ $scheduleTitle }}</h2>
                     <div class="sched-policyno">Policy No.<span>{{ $policy->online_policy_no }}</span></div>
                 </div>
             </div>
 
-            @include('policies.partials.insured-details-grid', ['policy' => $policy])
+            <div class="coc-doc">
+                <table class="coc-grid">
+                    <tr>
+                        <td rowspan="4" style="width: 46%;">
+                            <label>Name and Address of Insured</label>
+                            @php
+                                $insured = $policy->motorQuote->policyholders->firstWhere('use_as_address', true)
+                                    ?? $policy->motorQuote->policyholders->first();
+                                $insuredName = $insured->name ?? $policy->producer->full_name;
+                                $insuredAddress = $insured->address ?? '';
+                            @endphp
+                            <span>{{ $insuredName }}@if($insuredAddress)<br>{{ $insuredAddress }}@endif</span>
+                        </td>
+                        <td style="width: 27%;"><label>Business / Profession</label></td>
+                        <td style="width: 27%;"><label>Confirmation of Cover</label></td>
+                    </tr>
+                    <tr>
+                        <td><label>Date Issued</label><span>{{ $policy->issued_at->format('M d, Y') }}</span></td>
+                        <td><label>Official Receipt No.</label></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" class="header-cell">Period of Insurance</td>
+                    </tr>
+                    <tr>
+                        <td><label>From 12:00 Noon</label><span>{{ $policy->contract_from->format('M d, Y') }}</span></td>
+                        <td><label>To 12:00 Noon</label><span>{{ $policy->contract_to->format('M d, Y') }}</span></td>
+                    </tr>
+                </table>
+            </div>
 
             @include('policies.partials.scheduled-vehicle', ['policy' => $policy])
 
-            @include('policies.partials.liability-box', ['policy' => $policy])
+            <table class="coc-liability">
+                <tr>
+                    <td style="width: 46%;" rowspan="2">
+                        <p class="liability-label">Section I/II</p>
+                        <p class="liability-title">Third Party Liability</p>
+                        <p class="liability-sub">(Subject to the Schedule of Indemnities)</p>
+                    </td>
+                    <td style="width: 6%;" rowspan="2" class="amounts-col">A<br>M<br>O<br>U<br>N<br>T<br>S</td>
+                    <td style="width: 48%;">
+                        <div class="amount-row"><span class="amt-label">Limits of Liability</span><span class="amt-value">&#8369; 200,000.00</span></div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="amount-row"><span class="amt-label">Premium Paid</span><span class="amt-value">&#8369; {{ number_format($policy->motorQuote->total_premium, 2) }}</span></div>
+                    </td>
+                </tr>
+            </table>
 
             <div class="sched-columns">
                 <div class="sched-col-left">
                     <div class="section-bar small">Section III</div>
                     <table class="coc-grid">
                         <tr>
-                            <td colspan="2"><label>Insured's Estimate of Value of Scheduled Vehicle</label><span class="not-covered">Not Covered</span></td>
+                            <td colspan="2"><label>Insured's Estimate of Value of Schedule Vehicle</label><span class="not-covered">Not Covered</span></td>
                         </tr>
                         <tr>
-                            <td colspan="2"><label>Accessories</label><span class="not-covered">Not Covered</span></td>
+                            <td colspan="2">
+                                <label>Accessories</label>
+                                <span class="not-covered stacked">1. Not Covered</span>
+                                <span class="not-covered stacked">2. Not Covered</span>
+                                <span class="not-covered stacked">3. Not Covered</span>
+                                <span class="not-covered stacked">4. Not Covered</span>
+                            </td>
                         </tr>
                         <tr>
                             <td><label>Deductible</label><span>Nil</span></td>
@@ -192,62 +264,95 @@
                     <div class="section-bar small">Section IV</div>
                     <table class="coc-grid">
                         <tr>
-                            <td><label>Bodily Injury</label><span class="not-covered">Not Covered</span></td>
-                            <td><label>Property Damage</label><span class="not-covered">Not Covered</span></td>
+                            <td><label>1. Bodily Injury</label><span class="not-covered">Not Covered</span></td>
+                            <td><label>2. Property Damage</label><span class="not-covered">Not Covered</span></td>
                         </tr>
                     </table>
 
-                    <div class="section-bar small">Mortgagee</div>
+                    <div class="section-bar small">Mortgagee:</div>
                     <p class="not-applicable">Not Applicable</p>
                 </div>
 
                 <div class="sched-col-right">
                     <div class="premium-card">
                         <div class="premium-card-title">Premiums</div>
-                        <div class="row"><span>Section I/II Premium</span><span>₱{{ number_format($policy->motorQuote->net_premium, 2) }}</span></div>
-                        <div class="row group-label"><span>Others</span></div>
-                        <div class="row sub"><span>LTO DBP-DCI Fee</span><span>₱{{ number_format($policy->motorQuote->lto_dbp_dci_fee, 2) }}</span></div>
-                        <div class="row sub"><span>COC Verification Fee</span><span>₱{{ number_format($policy->motorQuote->coc_verification_fee, 2) }}</span></div>
-                        <div class="row sub"><span>Other Charges</span><span>₱{{ number_format($policy->motorQuote->other_charges, 2) }}</span></div>
-                        <div class="row"><span>Documentary Stamps Tax</span><span>₱{{ number_format($policy->motorQuote->doc_stamps_tax, 2) }}</span></div>
+                        <div class="row"><span>Section I-A/II</span><span class="dash">&mdash;</span></div>
+                        <div class="row"><span>Section I-B/II</span><span class="dash">&mdash;</span></div>
+                        <div class="row group-label"><span>Section III:</span></div>
+                        <div class="row sub"><span>Own Damage</span><span class="dash">&mdash;</span></div>
+                        <div class="row sub"><span>Theft</span><span class="dash">&mdash;</span></div>
+                        <div class="row"><span>Section IV-1</span><span class="dash">&mdash;</span></div>
+                        <div class="row"><span>Section IV-2</span><span class="dash">&mdash;</span></div>
+                        <div class="row group-label"><span>Others:</span></div>
+                        <div class="row sub"><span>Acts of Nature</span><span class="dash">&mdash;</span></div>
+                        <div class="row sub"><span>Auto Personal Accident</span><span class="dash">&mdash;</span></div>
+                        <div class="row"><span>Total Premium</span><span>₱{{ number_format($basePremium, 2) }}</span></div>
+                        <div class="row"><span>Documentary Stamps</span><span>₱{{ number_format($policy->motorQuote->doc_stamps_tax, 2) }}</span></div>
                         <div class="row"><span>Value Added Tax</span><span>₱{{ number_format($policy->motorQuote->vat, 2) }}</span></div>
-                        <div class="row"><span>Local Government Tax</span><span>₱{{ number_format($policy->motorQuote->local_govt_tax, 2) }}</span></div>
+                        <div class="row"><span>Local Gov't Tax</span><span>₱{{ number_format($policy->motorQuote->local_govt_tax, 2) }}</span></div>
                         <div class="row total"><span>Total Amount Due</span><span>₱{{ number_format($policy->motorQuote->total_premium, 2) }}</span></div>
                     </div>
                 </div>
             </div>
 
-            <div class="section-bar small">Forms and Endorsements Made Part of This Policy at Time of Issue</div>
-            <p class="not-applicable">None</p>
+            <div class="section-bar small">Forms and Endorsements Made Part of This Policy at Time of Issue:</div>
+            <div class="blank-box"></div>
 
             <div class="legal-block">
+                <p><strong>Authorized Driver:</strong></p>
                 <p>
-                    <strong>Authorized Driver:</strong> Any of the following: (a) the Insured; (b) any person driving on the Insured's
-                    order or with his permission, provided that the person driving is permitted, in accordance with the licensing law
-                    or other regulations, to drive the Scheduled Vehicle, or has been permitted and is not disqualified by order of a
-                    Court of Law or by reason of any enactment or regulation in that behalf, provided that for Sections I and II only
-                    of this Policy an authorized driver shall include a duly licensed driver whose license at the time of the accident
-                    had expired.
+                    Any of the following: (a) The Insured; (b) Any person driving on the Insured's order or with his permission.
                 </p>
                 <p>
-                    <strong>Limitations as to Use:</strong> Use only for social, domestic and pleasure purposes, and for the Insured's
-                    business or profession. This policy does not cover use for (1) the hauling and/or carrying of logs, lumber, sand,
-                    gravel, bottled beverages, gasoline products and/or other inflammable articles or materials; (2) racing,
-                    pacemaking, reliability trial or speed testing; (3) the carriage of passengers for hire or reward; (4) any purpose
-                    in connection with the Motor Trade.
+                    Provided that the person driving is permitted, in accordance with the licensing law or other regulations, to
+                    drive the Scheduled Vehicle, or has been permitted and is not disqualified by order of a Court of Law or by
+                    reason of any enactment or regulation in that behalf, provided that for Sections I and II only of this Policy an
+                    authorized driver shall include a duly licensed driver but whose license at the time of the accident had expired.
                 </p>
+                <p><strong>Limitations as to Use:</strong></p>
                 <p>
-                    Sections I and II of this Policy cover THIRD PARTY liability arising from bodily injury and/or death in amounts
+                    Use only for social, domestic and pleasure purposes, and for the Insured's business or profession. This policy
+                    does not cover
+                </p>
+                <ol>
+                    <li>Use for the hauling and/or carrying of logs, lumber, sand, gravel, bottled beverages, gasoline products
+                        and/or other inflammable articles or materials.</li>
+                    <li>Use for racing, pacemaking, reliability trial or speed testing.</li>
+                </ol>
+                <p>
+                    N.B. Provided that limitations (1) and (2) above may be deleted and the risks named therein covered by this
+                    policy upon agreement by, and payment of 20% additional premium to the Company.
+                </p>
+                <ol start="3">
+                    <li>Use for the carriage of PASSENGERS or for hire or reward.</li>
+                    <li>Use for any purpose in connection with the Motor Trade.</li>
+                </ol>
+                <p>
+                    SECTIONS I and II of this Policy cover THIRD PARTY liability arising from bodily injury and/or death in amounts
                     set forth under the Schedule of Indemnities.
+                </p>
+                <p>
+                    IN WITNESS WHEREOF, the Company has caused this Policy to be signed by its duly authorized officer/representative
+                    at Makati City, Philippines, this {{ $policy->issued_at->format('jS') }} day of
+                    {{ $policy->issued_at->format('F, Y') }}.
                 </p>
             </div>
 
-            <div class="sched-signoff">
-                <p>
-                    IN WITNESS WHEREOF, the Company has caused this Policy to be signed by its duly authorized officer/representative
-                    at Makati City, Philippines this {{ $policy->issued_at->format('jS \d\a\y \o\f F, Y') }}.
-                </p>
-                <div class="signature-line">Authorized Signature</div>
+            <div class="sched-footer-grid">
+                <div class="notice-col">
+                    <p>Documentary Stamps to the value stated above have been affixed and properly cancelled on the office copy of this Policy.</p>
+                    <p class="important">Important Notice</p>
+                    <p>
+                        The Insurance Commissioner, with offices in Manila, Cebu and Davao is the Government official in-charge of
+                        the faithful execution and enforcement of all laws relating to insurance and has supervision over insurance
+                        companies. He is ready at all times to render assistance in settling any controversy between an insurance
+                        company and a policyholder relating to insurance matters.
+                    </p>
+                </div>
+                <div class="sign-col">
+                    <p class="sign-line">By: Authorized Signature</p>
+                    <p class="role">Branch Manager</p>
+                </div>
             </div>
         </div>
     @else

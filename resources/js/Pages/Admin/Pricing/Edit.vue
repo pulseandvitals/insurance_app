@@ -14,6 +14,9 @@ const form = useForm({
     motorcycle_base_rate: props.pricing.motorcycle_base_rate,
     pc_suv_base_rate: props.pricing.pc_suv_base_rate,
     cv_truck_base_rate: props.pricing.cv_truck_base_rate,
+    motorcycle_remittance_rate: props.pricing.motorcycle_remittance_rate,
+    pc_suv_remittance_rate: props.pricing.pc_suv_remittance_rate,
+    cv_truck_remittance_rate: props.pricing.cv_truck_remittance_rate,
     doc_stamp_tax_percent: props.pricing.doc_stamp_tax_percent,
     vat_percent: props.pricing.vat_percent,
     local_govt_tax_percent: props.pricing.local_govt_tax_percent,
@@ -39,6 +42,14 @@ function submit() {
                     <Input id="motorcycle_base_rate" v-model="form.motorcycle_base_rate" type="number" label="Motorcycle" required :error="form.errors.motorcycle_base_rate" />
                     <Input id="pc_suv_base_rate" v-model="form.pc_suv_base_rate" type="number" label="PC (SUV)" required :error="form.errors.pc_suv_base_rate" />
                     <Input id="cv_truck_base_rate" v-model="form.cv_truck_base_rate" type="number" label="CV (Trucks)" required :error="form.errors.cv_truck_base_rate" />
+                </div>
+            </Card>
+
+            <Card title="Head Office Remittance" subtitle="The fixed amount remitted to head office per issuance, per vehicle category. The admin dashboard reports profit as the producer's issuance price minus this rate (scaled by coverage period).">
+                <div class="grid grid-cols-1 gap-5 sm:grid-cols-3">
+                    <Input id="motorcycle_remittance_rate" v-model="form.motorcycle_remittance_rate" type="number" label="Motorcycle" required :error="form.errors.motorcycle_remittance_rate" />
+                    <Input id="pc_suv_remittance_rate" v-model="form.pc_suv_remittance_rate" type="number" label="PC (SUV)" required :error="form.errors.pc_suv_remittance_rate" />
+                    <Input id="cv_truck_remittance_rate" v-model="form.cv_truck_remittance_rate" type="number" label="CV (Trucks)" required :error="form.errors.cv_truck_remittance_rate" />
                 </div>
             </Card>
 
