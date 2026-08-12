@@ -47,6 +47,7 @@ class MotorQuote extends Model
         'expiry_date',
         'lto_status',
         'lto_message',
+        'authentication_no',
     ];
 
     protected function casts(): array

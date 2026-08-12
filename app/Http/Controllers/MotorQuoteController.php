@@ -126,8 +126,8 @@ class MotorQuoteController extends Controller
 
     public function authenticateLto(MotorQuoteRequest $request, MotorQuote $motorQuote): RedirectResponse
     {
-        if (! $motorQuote->color || ! $motorQuote->chassis_no || ! $motorQuote->mv_file_no) {
-            return back()->with('error', 'Please complete the vehicle details (Color, Chassis/Serial No., MV File No.) before authenticating with LTO.');
+        if (! $motorQuote->authentication_no || ! $motorQuote->color || ! $motorQuote->chassis_no || ! $motorQuote->mv_file_no) {
+            return back()->with('error', 'Please complete the vehicle details (Authentication #, Color, Chassis/Serial No., MV File No.) before authenticating with LTO.');
         }
 
         if ($motorQuote->policyholders()->count() === 0) {
@@ -172,7 +172,7 @@ class MotorQuoteController extends Controller
             'online_policy_no' => 'OP-'.now()->format('Y').'-'.str_pad((string) $motorQuote->id, 6, '0', STR_PAD_LEFT),
             'genweb_code' => 'GW'.strtoupper(Str::random(8)),
             'coc_no' => 'COC-'.strtoupper(Str::random(10)),
-            'authentication_no' => 'AUTH-'.strtoupper(Str::random(10)),
+            'authentication_no' => $motorQuote->authentication_no,
             'issued_at' => now(),
             'contract_from' => $motorQuote->inception_date,
             'contract_to' => $motorQuote->expiry_date,

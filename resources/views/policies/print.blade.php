@@ -6,6 +6,7 @@
     <style>
         * { box-sizing: border-box; }
         body { font-family: 'DejaVu Sans', Helvetica, Arial, sans-serif; color: #111; font-size: 13px; margin: 0; padding: 32px; }
+        body.coc-mode { padding: 18px 24px; }
         .letterhead { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 3px solid #2a78d6; padding-bottom: 12px; margin-bottom: 20px; }
         .brand { display: flex; align-items: center; gap: 10px; }
         .brand img { width: 44px; height: 44px; object-fit: contain; }
@@ -27,6 +28,7 @@
         ul.wordings { padding-left: 20px; }
         ul.wordings li { margin-bottom: 6px; }
         .footer-note { margin-top: 16px; font-size: 10px; color: #888; }
+        body.coc-mode .footer-note { margin-top: 4px; font-size: 7px; }
 
         /* Certificate of Cover — modeled on the physical Stronghold COC form */
         /* NOTE: this block intentionally avoids flexbox — dompdf (used for the PDF
@@ -79,6 +81,41 @@
         .coc-doc .coc-footer .legal { font-size: 9px; line-height: 1.5; }
         .coc-doc .signature-line { width: 100%; text-align: center; border-top: 1px solid #111; padding-top: 4px; font-size: 9px; }
 
+        /* Two copies (LTO / Customer) printed on a single sheet — every size below
+           is a scaled-down version of the rules above so both copies plus the cut
+           line fit on one page, in both the browser print view and the PDF export. */
+        .coc-doc.compact { font-size: 8.5px; }
+        .coc-doc.compact table.coc-company-inner td { padding: 4px 8px; }
+        .coc-doc.compact .coc-logo-cell { width: 35px; }
+        .coc-doc.compact .coc-logo-cell img { width: 35px; height: 35px; }
+        .coc-doc.compact .coc-company h1 { font-size: 14px; }
+        .coc-doc.compact .coc-company p { font-size: 6.8px; }
+        .coc-doc.compact .coc-company p.tagline { font-size: 7.8px; }
+        .coc-doc.compact .coc-doctitle .original { font-size: 13px; margin: 0 0 2px; }
+        .coc-doc.compact .coc-doctitle h2 { font-size: 11px; }
+        .coc-doc.compact .coc-doctitle h3 { font-size: 6.8px; }
+        .coc-doc.compact .coc-number { font-size: 13px; margin-top: 4px; }
+        .coc-doc.compact .coc-policyno { font-size: 7.3px; margin: 3px 0; }
+        .coc-doc.compact table.coc-grid td { padding: 1px 6px; height: 14px; }
+        .coc-doc.compact table.coc-grid td label { font-size: 6.3px; margin-bottom: 1px; }
+        .coc-doc.compact table.coc-grid td span { font-size: 7.8px; }
+        .coc-doc.compact table.coc-grid td.header-cell { font-size: 7.3px; }
+        .coc-doc.compact .section-bar { padding: 2px; font-size: 7.8px; }
+        .coc-doc.compact table.coc-liability td { padding: 4px 8px; }
+        .coc-doc.compact .liability-label { font-size: 7.8px; }
+        .coc-doc.compact .liability-title { font-size: 10px; margin: 3px 0; }
+        .coc-doc.compact .liability-sub { font-size: 6.3px; }
+        .coc-doc.compact .amounts-col { font-size: 7.3px; }
+        .coc-doc.compact .amount-row .amt-label { font-size: 7.8px; }
+        .coc-doc.compact .amount-row .amt-label .amt-sub { font-size: 6.3px; }
+        .coc-doc.compact .amount-row .amt-value { font-size: 10.3px; }
+        .coc-doc.compact table.coc-footer-table { margin-top: 4px; }
+        body.coc-mode .coc-doc.compact { margin-bottom: 0; }
+        .coc-doc.compact .coc-footer .legal { font-size: 6.3px; line-height: 1.4; }
+        .coc-doc.compact .signature-line { font-size: 6.3px; padding-top: 2px; }
+
+        .coc-cut-line { text-align: center; font-size: 9px; letter-spacing: 1px; color: #999; margin: 5px 0; }
+
         /* Policy Schedule — modern recreation of the physical Stronghold policy schedule form */
         .schedule-doc { font-size: 11px; }
         .schedule-doc .sched-header { display: flex; justify-content: space-between; align-items: stretch; gap: 16px; border: 1px solid #d7e0ef; border-radius: 8px; overflow: hidden; }
@@ -125,58 +162,13 @@
         .schedule-doc .sched-footer-grid .sign-col .role { margin: 2px 0 0; font-size: 9px; color: #555; }
     </style>
 </head>
-<body onload="window.print()">
+<body onload="window.print()" @class(['coc-mode' => $mode === 'coc'])>
     @if ($mode === 'coc')
-        <div class="coc-doc">
-            <table class="coc-header-table">
-                <tr>
-                    <td class="coc-company-cell">
-                        <table class="coc-company-inner">
-                            <tr>
-                                <td class="coc-logo-cell"><img src="{{ $logo }}" alt="Stronghold"></td>
-                                <td class="coc-company">
-                                    <h1>STRONGHOLD</h1>
-                                    <p class="tagline">INSURANCE COMPANY, INCORPORATED</p>
-                                    <p>17th Floor, Security Bank Centre, 6776 Ayala Avenue, Makati City, Philippines</p>
-                                    <p>Tel. Nos.: 8891-1329 to 37 &bull; Fax Nos. 8891-1640; 8891-1326; 8891-1383</p>
-                                    <p>TIN: 000-602-270-00000 VAT</p>
-                                </td>
-                            </tr>
-                        </table>
-                    </td>
-                    <td class="coc-doctitle-cell">
-                        <div class="coc-doctitle">
-                            <p class="original">&ldquo;ORIGINAL COPY&rdquo;</p>
-                            <h2>Confirmation of Cover</h2>
-                            <h3>Non-Land Transportation Operators<br>Vehicle</h3>
-                            <p class="coc-number">No. {{ $policy->coc_no }}</p>
-                        </div>
-                    </td>
-                </tr>
-            </table>
+        @include('policies.partials.coc-copy', ['policy' => $policy, 'logo' => $logo, 'copyLabel' => 'LTO Copy'])
 
-            <div class="coc-policyno"><label>Policy No.</label><span>{{ $policy->online_policy_no }}</span></div>
+        <p class="coc-cut-line">&#9986; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - &#9986;</p>
 
-            @include('policies.partials.insured-details-grid', ['policy' => $policy])
-
-            @include('policies.partials.scheduled-vehicle', ['policy' => $policy])
-
-            @include('policies.partials.liability-box', ['policy' => $policy])
-
-            <table class="coc-footer-table">
-                <tr>
-                    <td class="coc-footer-legal-cell coc-footer">
-                        <p class="legal">
-                            This Confirmation of Cover is evidence of the policy of insurance required under Chapter VI &ndash;
-                            Compulsory Motor Vehicle Liability Insurance, of the Insurance Code, as amended by Presidential Decree No. 1814.
-                        </p>
-                    </td>
-                    <td class="coc-footer-sign-cell">
-                        <div class="signature-line">Authorized Signature</div>
-                    </td>
-                </tr>
-            </table>
-        </div>
+        @include('policies.partials.coc-copy', ['policy' => $policy, 'logo' => $logo, 'copyLabel' => 'Customer Copy'])
     @elseif ($mode === 'schedule')
         @php
             $scheduleTitles = [

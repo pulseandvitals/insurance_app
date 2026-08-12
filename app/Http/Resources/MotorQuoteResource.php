@@ -46,6 +46,7 @@ class MotorQuoteResource extends JsonResource
 
             'lto_status' => $this->lto_status,
             'lto_message' => $this->lto_message,
+            'authentication_no' => $this->authentication_no,
 
             'created_at' => $this->created_at,
 

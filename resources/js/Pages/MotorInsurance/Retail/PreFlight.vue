@@ -28,6 +28,7 @@ function peso(value) {
 }
 
 const detailsForm = useForm({
+    authentication_no: props.quote.authentication_no ?? '',
     chassis_no: props.quote.chassis_no ?? '',
     motor_no: props.quote.motor_no ?? '',
     mv_file_no: props.quote.mv_file_no ?? '',
@@ -81,6 +82,21 @@ function proceedToCheckout() {
                         <p class="text-xl font-bold text-primary-600 dark:text-primary-400">{{ peso(quote.total_premium) }}</p>
                     </div>
                 </div>
+            </Card>
+
+            <Card
+                title="Authentication #"
+                subtitle="LTO's real-time authentication service is not yet connected. Obtain the authentication number from the existing LTO authentication system and enter it here — it will carry over to the issued policy and print on the Confirmation of Cover."
+            >
+                <Input
+                    id="authentication_no"
+                    v-model="detailsForm.authentication_no"
+                    label="Authentication #"
+                    placeholder="e.g., C151-B5125-C12512"
+                    required
+                    :error="detailsForm.errors.authentication_no"
+                    help="Copy this exactly as issued by the LTO authentication system — letters and numbers, no prefixes added."
+                />
             </Card>
 
             <Card title="Add Vehicle Details">
