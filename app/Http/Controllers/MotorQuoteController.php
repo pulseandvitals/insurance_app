@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\MotorQuote\CheckoutStoreRequest;
 use App\Http\Requests\MotorQuote\MotorQuoteRequest;
 use App\Http\Requests\MotorQuote\OcrStoreRequest;
 use App\Http\Requests\MotorQuote\PreFlightStoreRequest;
@@ -156,7 +157,7 @@ class MotorQuoteController extends Controller
         ]);
     }
 
-    public function checkoutStore(MotorQuoteRequest $request, MotorQuote $motorQuote): RedirectResponse
+    public function checkoutStore(CheckoutStoreRequest $request, MotorQuote $motorQuote): RedirectResponse
     {
         abort_unless($motorQuote->lto_status === 'verified', 422);
 

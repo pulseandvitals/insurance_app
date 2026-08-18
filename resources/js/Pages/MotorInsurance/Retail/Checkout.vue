@@ -5,6 +5,7 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import Card from "@/Components/UI/Card.vue";
 import Button from "@/Components/UI/Button.vue";
 import Banner from "@/Components/UI/Banner.vue";
+import Checkbox from "@/Components/Checkbox.vue";
 import WizardSteps from "@/Components/MotorInsurance/WizardSteps.vue";
 
 const props = defineProps({
@@ -22,7 +23,9 @@ function peso(value) {
     );
 }
 
-const form = useForm({});
+const form = useForm({
+    terms_accepted: false,
+});
 
 function pay() {
     form.post(route("motor-risks.checkout.store", props.quote.id));
@@ -100,10 +103,52 @@ const insufficientFunds =
                     Your e-wallet balance is not enough to cover this premium.
                     Please reload your wallet before proceeding.
                 </Banner>
+            </Card>
+
+            <Card title="Terms and Conditions">
+                <div
+                    class="max-h-48 overflow-y-auto rounded-lg border border-gray-200 bg-gray-50 p-4 text-xs leading-relaxed text-gray-600 dark:border-gray-700 dark:bg-gray-900/40 dark:text-gray-300"
+                >
+                    <ol class="list-decimal space-y-2 pl-4">
+                        <li>
+                            This transaction and the resulting Confirmation of Cover / Policy are subject to the full terms,
+                            conditions, and exclusions of the Compulsory Third Party Liability (CTPL) master policy issued by
+                            Stronghold Insurance Company, Incorporated.
+                        </li>
+                        <li>
+                            The premium reflected above is inclusive of all applicable taxes, fees, and charges. Once the policy
+                            is issued, the e-Wallet Deduction shown is final and non-refundable.
+                        </li>
+                        <li>
+                            The Producer warrants that all vehicle, policyholder, and authentication details entered for this
+                            transaction are true, accurate, and obtained from valid, authorized sources.
+                        </li>
+                        <li>
+                            Coverage is effective only upon successful issuance of the policy and is strictly limited to the
+                            vehicle, coverage period, and terms stated in the Policy Schedule and Confirmation of Cover.
+                        </li>
+                        <li>
+                            Stronghold Insurance Company, Incorporated reserves the right to cancel or void any coverage found to
+                            have been issued on the basis of false, inaccurate, or fraudulent information.
+                        </li>
+                        <li>
+                            This transaction and document are governed by the Insurance Code of the Philippines and other
+                            applicable laws, rules, and regulations.
+                        </li>
+                    </ol>
+                </div>
+
+                <label class="mt-4 flex items-start gap-2.5 text-sm text-gray-700 dark:text-gray-300">
+                    <Checkbox v-model:checked="form.terms_accepted" class="mt-0.5 shrink-0" />
+                    <span>I have read and agree to the Terms and Conditions governing this CTPL policy issuance.</span>
+                </label>
+                <p v-if="form.errors.terms_accepted" class="mt-1.5 text-xs font-medium text-status-critical">
+                    {{ form.errors.terms_accepted }}
+                </p>
 
                 <div class="mt-6 flex justify-end">
                     <Button
-                        :disabled="form.processing || insufficientFunds"
+                        :disabled="form.processing || insufficientFunds || !form.terms_accepted"
                         @click="pay"
                     >
                         <Loader2

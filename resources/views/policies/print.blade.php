@@ -55,6 +55,8 @@
         .coc-doc .coc-policyno { text-align: right; font-size: 10px; margin: 6px 0 10px; }
         .coc-doc .coc-policyno label { display: inline; text-transform: uppercase; color: #555; margin-right: 6px; }
         .coc-doc .coc-policyno span { border-bottom: 1px solid #111; padding: 0 4px 1px; font-weight: 600; }
+        .coc-doc .coc-authno label { color: #184f95; font-weight: bold; }
+        .coc-doc .coc-authno span { font-size: 13px; color: #184f95; border-bottom-color: #184f95; }
 
         .coc-doc table.coc-grid { width: 100%; border-collapse: collapse; table-layout: fixed; }
         .coc-doc table.coc-grid td { border: 1px solid #111; vertical-align: top; padding: 5px 8px; height: 26px; }
@@ -96,6 +98,9 @@
         .coc-doc.compact .coc-doctitle h3 { font-size: 6.8px; }
         .coc-doc.compact .coc-number { font-size: 13px; margin-top: 4px; }
         .coc-doc.compact .coc-policyno { font-size: 7.3px; margin: 3px 0; }
+        .coc-doc.compact .coc-authno { margin: 4px 0; }
+        .coc-doc.compact .coc-authno label { font-size: 7.8px; }
+        .coc-doc.compact .coc-authno span { font-size: 10.5px; }
         .coc-doc.compact table.coc-grid td { padding: 1px 6px; height: 14px; }
         .coc-doc.compact table.coc-grid td label { font-size: 6.3px; margin-bottom: 1px; }
         .coc-doc.compact table.coc-grid td span { font-size: 7.8px; }

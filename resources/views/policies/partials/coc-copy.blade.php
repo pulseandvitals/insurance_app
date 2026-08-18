@@ -27,7 +27,7 @@
     </table>
 
     <div class="coc-policyno"><label>Policy No.</label><span>{{ $policy->online_policy_no }}</span></div>
-    <div class="coc-policyno"><label>Authentication No.</label><span>{{ $policy->authentication_no }}</span></div>
+    <div class="coc-policyno coc-authno"><label>Authentication No.</label><span>{{ $policy->authentication_no }}</span></div>
 
     @include('policies.partials.insured-details-grid', ['policy' => $policy])
 
