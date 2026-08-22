@@ -12,10 +12,19 @@ class PrintLogo
 {
     private static ?string $dataUri = null;
 
+    private static ?string $signatureDataUri = null;
+
     public static function dataUri(): string
     {
         return self::$dataUri ??= 'data:image/png;base64,'.base64_encode(
             file_get_contents(public_path('logo/stronghold_logo.png'))
+        );
+    }
+
+    public static function signatureDataUri(): string
+    {
+        return self::$signatureDataUri ??= 'data:image/png;base64,'.base64_encode(
+            file_get_contents(public_path('logo/vp_signature.png'))
         );
     }
 }

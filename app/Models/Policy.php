@@ -15,6 +15,7 @@ class Policy extends Model
         'coc_no',
         'authentication_no',
         'has_cov',
+        'cov_document_path',
         'is_direct',
         'issued_at',
         'contract_from',

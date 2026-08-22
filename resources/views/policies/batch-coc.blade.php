@@ -49,6 +49,10 @@
                 <div><label>Contract Term</label><span>{{ $policy->contract_from->format('M d, Y') }} — {{ $policy->contract_to->format('M d, Y') }}</span></div>
                 <div><label>Producer</label><span>{{ $policy->producer->code }} — {{ $policy->producer->full_name }}</span></div>
             </div>
+
+            <div style="margin-top: 32px;">
+                @include('policies.partials.vp-signature')
+            </div>
         </div>
     @endforeach
 </body>

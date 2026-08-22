@@ -44,7 +44,7 @@
                 </p>
             </td>
             <td class="coc-footer-sign-cell">
-                <div class="signature-line">Authorized Signature</div>
+                @include('policies.partials.vp-signature', ['compact' => true])
             </td>
         </tr>
     </table>

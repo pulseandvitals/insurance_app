@@ -17,6 +17,7 @@ class PolicyResource extends JsonResource
             'coc_no' => $this->coc_no,
             'authentication_no' => $this->authentication_no,
             'has_cov' => $this->has_cov,
+            'has_cov_document' => (bool) $this->cov_document_path,
             'is_direct' => $this->is_direct,
             'issued_at' => $this->issued_at,
             'contract_from' => $this->contract_from,

@@ -6,7 +6,7 @@
     <style>
         * { box-sizing: border-box; }
         body { font-family: 'DejaVu Sans', Helvetica, Arial, sans-serif; color: #111; font-size: 13px; margin: 0; padding: 32px; }
-        body.coc-mode { padding: 18px 24px; }
+        body.coc-mode { padding: 10px 24px 0; }
         .letterhead { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 3px solid #2a78d6; padding-bottom: 12px; margin-bottom: 20px; }
         .brand { display: flex; align-items: center; gap: 10px; }
         .brand img { width: 44px; height: 44px; object-fit: contain; }
@@ -28,7 +28,7 @@
         ul.wordings { padding-left: 20px; }
         ul.wordings li { margin-bottom: 6px; }
         .footer-note { margin-top: 16px; font-size: 10px; color: #888; }
-        body.coc-mode .footer-note { margin-top: 4px; font-size: 7px; }
+        body.coc-mode .footer-note { margin-top: 0; font-size: 5.8px; line-height: 1.3; }
 
         /* Certificate of Cover — modeled on the physical Stronghold COC form */
         /* NOTE: this block intentionally avoids flexbox — dompdf (used for the PDF
@@ -50,13 +50,13 @@
         .coc-doc .coc-doctitle .original { font-size: 19px; font-weight: bold; margin: 0 0 4px; }
         .coc-doc .coc-doctitle h2 { margin: 0; font-size: 15px; text-transform: uppercase; }
         .coc-doc .coc-doctitle h3 { margin: 3px 0 0; font-size: 10px; font-weight: normal; text-transform: uppercase; line-height: 1.4; }
-        .coc-doc .coc-number { margin-top: 10px; font-size: 20px; font-weight: bold; }
+        .coc-doc .coc-number { margin-top: 10px; font-size: 20px; font-weight: bold; color: red; }
 
         .coc-doc .coc-policyno { text-align: right; font-size: 10px; margin: 6px 0 10px; }
         .coc-doc .coc-policyno label { display: inline; text-transform: uppercase; color: #555; margin-right: 6px; }
         .coc-doc .coc-policyno span { border-bottom: 1px solid #111; padding: 0 4px 1px; font-weight: 600; }
-        .coc-doc .coc-authno label { color: #184f95; font-weight: bold; }
-        .coc-doc .coc-authno span { font-size: 13px; color: #184f95; border-bottom-color: #184f95; }
+        .coc-doc .coc-authno label { font-weight: 600; }
+        .coc-doc .coc-authno span { font-size: 20px; color: #111; border-bottom-color: #111; }
 
         .coc-doc table.coc-grid { width: 100%; border-collapse: collapse; table-layout: fixed; }
         .coc-doc table.coc-grid td { border: 1px solid #111; vertical-align: top; padding: 5px 8px; height: 26px; }
@@ -88,8 +88,8 @@
            line fit on one page, in both the browser print view and the PDF export. */
         .coc-doc.compact { font-size: 8.5px; }
         .coc-doc.compact table.coc-company-inner td { padding: 4px 8px; }
-        .coc-doc.compact .coc-logo-cell { width: 35px; }
-        .coc-doc.compact .coc-logo-cell img { width: 35px; height: 35px; }
+        .coc-doc.compact .coc-logo-cell { width: 48px; }
+        .coc-doc.compact .coc-logo-cell img { width: 48px; height: 48px; }
         .coc-doc.compact .coc-company h1 { font-size: 14px; }
         .coc-doc.compact .coc-company p { font-size: 6.8px; }
         .coc-doc.compact .coc-company p.tagline { font-size: 7.8px; }
@@ -100,11 +100,11 @@
         .coc-doc.compact .coc-policyno { font-size: 7.3px; margin: 3px 0; }
         .coc-doc.compact .coc-authno { margin: 4px 0; }
         .coc-doc.compact .coc-authno label { font-size: 7.8px; }
-        .coc-doc.compact .coc-authno span { font-size: 10.5px; }
-        .coc-doc.compact table.coc-grid td { padding: 1px 6px; height: 14px; }
-        .coc-doc.compact table.coc-grid td label { font-size: 6.3px; margin-bottom: 1px; }
-        .coc-doc.compact table.coc-grid td span { font-size: 7.8px; }
-        .coc-doc.compact table.coc-grid td.header-cell { font-size: 7.3px; }
+        .coc-doc.compact .coc-authno span { font-size: 13px; }
+        .coc-doc.compact table.coc-grid td { padding: 0.8px 6px; height: 13.5px; }
+        .coc-doc.compact table.coc-grid td label { font-size: 6.8px; margin-bottom: 1px; }
+        .coc-doc.compact table.coc-grid td span { font-size: 8.6px; }
+        .coc-doc.compact table.coc-grid td.header-cell { font-size: 7.6px; }
         .coc-doc.compact .section-bar { padding: 2px; font-size: 7.8px; }
         .coc-doc.compact table.coc-liability td { padding: 4px 8px; }
         .coc-doc.compact .liability-label { font-size: 7.8px; }
@@ -114,12 +114,12 @@
         .coc-doc.compact .amount-row .amt-label { font-size: 7.8px; }
         .coc-doc.compact .amount-row .amt-label .amt-sub { font-size: 6.3px; }
         .coc-doc.compact .amount-row .amt-value { font-size: 10.3px; }
-        .coc-doc.compact table.coc-footer-table { margin-top: 4px; }
+        .coc-doc.compact table.coc-footer-table { margin-top: 2px; }
         body.coc-mode .coc-doc.compact { margin-bottom: 0; }
         .coc-doc.compact .coc-footer .legal { font-size: 6.3px; line-height: 1.4; }
         .coc-doc.compact .signature-line { font-size: 6.3px; padding-top: 2px; }
 
-        .coc-cut-line { text-align: center; font-size: 9px; letter-spacing: 1px; color: #999; margin: 5px 0; }
+        .coc-cut-line { text-align: center; font-size: 9px; letter-spacing: 1px; color: #999; margin: 4px 0; }
 
         /* Policy Schedule — modern recreation of the physical Stronghold policy schedule form */
         .schedule-doc { font-size: 11px; }
@@ -162,7 +162,7 @@
         .schedule-doc .sched-footer-grid .notice-col { width: 64%; font-size: 8.5px; line-height: 1.5; color: #444; }
         .schedule-doc .sched-footer-grid .notice-col p { margin: 0 0 6px; }
         .schedule-doc .sched-footer-grid .notice-col .important { font-weight: bold; text-align: center; font-size: 9.5px; color: #184f95; text-transform: uppercase; letter-spacing: 0.03em; margin: 8px 0 4px; }
-        .schedule-doc .sched-footer-grid .sign-col { width: 36%; text-align: center; padding-top: 34px; }
+        .schedule-doc .sched-footer-grid .sign-col { width: 36%; text-align: center; }
         .schedule-doc .sched-footer-grid .sign-col .sign-line { width: 100%; margin: 0; border-top: 1px solid #111; padding-top: 4px; font-size: 9px; }
         .schedule-doc .sched-footer-grid .sign-col .role { margin: 2px 0 0; font-size: 9px; color: #555; }
     </style>
@@ -372,8 +372,7 @@
                     </p>
                 </div>
                 <div class="sign-col">
-                    <p class="sign-line">By: Authorized Signature</p>
-                    <p class="role">Branch Manager</p>
+                    @include('policies.partials.vp-signature')
                 </div>
             </div>
         </div>
@@ -443,6 +442,12 @@
             <li>Waiver Clause</li>
             <li>Short Period Rate Scale</li>
         </ul>
+    @endif
+
+    @if (in_array($mode, ['cov', 'premium-statement', 'jacket']))
+        <div style="margin-top: 32px;">
+            @include('policies.partials.vp-signature')
+        </div>
     @endif
 
     <p class="footer-note">

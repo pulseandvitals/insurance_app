@@ -97,6 +97,8 @@ Route::middleware(['auth', 'verified', 'producer'])->group(function () {
     Route::get('/policies/{policy}/print/{mode}', [PolicyController::class, 'print'])
         ->where('mode', 'schedule|coc|cov|premium-statement|jacket')
         ->name('policies.print');
+    Route::post('/policies/{policy}/cov', [PolicyController::class, 'uploadCov'])->name('policies.cov.upload');
+    Route::get('/policies/{policy}/cov', [PolicyController::class, 'viewCov'])->name('policies.cov.view');
 });
 
 require __DIR__.'/auth.php';

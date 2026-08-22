@@ -1,21 +1,51 @@
 <script setup>
-import { Head } from "@inertiajs/vue3";
+import { ref } from "vue";
+import { Head, useForm } from "@inertiajs/vue3";
 import {
     Printer,
     FileText,
     Download,
     ShieldCheck,
     BookText,
+    Upload,
+    Eye,
+    X,
 } from "lucide-vue-next";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import Card from "@/Components/UI/Card.vue";
 import Badge from "@/Components/UI/Badge.vue";
 import Button from "@/Components/UI/Button.vue";
 import Banner from "@/Components/UI/Banner.vue";
+import Modal from "@/Components/UI/Modal.vue";
+import Input from "@/Components/UI/Input.vue";
 
 const props = defineProps({
     policy: Object,
 });
+
+const showUploadCov = ref(false);
+const covForm = useForm({ cov_document: null });
+
+function submitCovUpload() {
+    covForm.post(route("policies.cov.upload", props.policy.id), {
+        forceFormData: true,
+        preserveScroll: true,
+        onSuccess: () => {
+            showUploadCov.value = false;
+            covForm.reset();
+        },
+    });
+}
+
+function closeCovUpload() {
+    showUploadCov.value = false;
+    covForm.reset();
+    covForm.clearErrors();
+}
+
+function viewCov() {
+    window.open(route("policies.cov.view", props.policy.id), "_blank");
+}
 
 function peso(value) {
     return (
@@ -217,7 +247,7 @@ const wordings = [
                     </div>
                 </div>
 
-                <div class="mt-4 flex flex-wrap gap-3">
+                <div class="mt-4 flex flex-wrap items-center gap-3">
                     <Button
                         variant="secondary"
                         size="sm"
@@ -236,6 +266,25 @@ const wordings = [
                         @click="printMode('cov')"
                         ><ShieldCheck class="h-3.5 w-3.5" />Print COV</Button
                     >
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        @click="showUploadCov = true"
+                        ><Upload class="h-3.5 w-3.5" />{{
+                            policy.has_cov_document
+                                ? "Replace COV"
+                                : "Upload COV"
+                        }}</Button
+                    >
+                    <template v-if="policy.has_cov_document">
+                        <Button
+                            variant="secondary"
+                            size="sm"
+                            @click="viewCov"
+                            ><Eye class="h-3.5 w-3.5" />View COV</Button
+                        >
+                        <Badge variant="good">COV Uploaded</Badge>
+                    </template>
                 </div>
             </Card>
 
@@ -263,5 +312,40 @@ const wordings = [
                 </div>
             </Card>
         </div>
+
+        <Modal
+            :show="showUploadCov"
+            title="Upload COV"
+            @close="closeCovUpload"
+        >
+            <div class="space-y-4">
+                <p class="text-sm text-gray-600 dark:text-gray-300">
+                    Upload the Certificate of Validation (COV) document for
+                    policy
+                    <span class="font-semibold">{{
+                        policy.online_policy_no
+                    }}</span
+                    >. Accepted formats: JPG, PNG, or PDF, up to 5MB.
+                </p>
+                <Input
+                    id="cov_document"
+                    type="file"
+                    label="COV Document"
+                    required
+                    :error="covForm.errors.cov_document"
+                    @change="(e) => (covForm.cov_document = e.target.files[0])"
+                />
+            </div>
+            <template #footer>
+                <Button variant="secondary" @click="closeCovUpload"
+                    ><X class="h-4 w-4" />Close</Button
+                >
+                <Button
+                    :disabled="covForm.processing"
+                    @click="submitCovUpload"
+                    ><Upload class="h-4 w-4" />Upload</Button
+                >
+            </template>
+        </Modal>
     </AuthenticatedLayout>
 </template>

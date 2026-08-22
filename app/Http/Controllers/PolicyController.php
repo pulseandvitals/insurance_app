@@ -7,6 +7,7 @@ use App\Http\Requests\Policy\ExtractionsExportRequest;
 use App\Http\Requests\Policy\PoliciesIndexRequest;
 use App\Http\Requests\Policy\PolicyRequest;
 use App\Http\Requests\Policy\RenewalSearchRequest;
+use App\Http\Requests\Policy\UploadCovRequest;
 use App\Http\Resources\PolicyResource;
 use App\Http\Resources\WalletResource;
 use App\Models\Policy;
@@ -16,6 +17,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response as HttpResponse;
 use Illuminate\Support\Facades\Response as ResponseFacade;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Inertia\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -165,5 +167,25 @@ class PolicyController extends Controller
         $policy->load('motorQuote.policyholders', 'producer');
 
         return view('policies.print', ['policy' => $policy, 'mode' => $mode, 'logo' => PrintLogo::dataUri()]);
+    }
+
+    public function uploadCov(UploadCovRequest $request, Policy $policy): RedirectResponse
+    {
+        if ($policy->cov_document_path) {
+            Storage::disk('local')->delete($policy->cov_document_path);
+        }
+
+        $path = $request->file('cov_document')->store('policy-covs', 'local');
+
+        $policy->update(['cov_document_path' => $path]);
+
+        return back()->with('success', 'COV document uploaded.');
+    }
+
+    public function viewCov(PolicyRequest $request, Policy $policy): StreamedResponse
+    {
+        abort_unless($policy->cov_document_path && Storage::disk('local')->exists($policy->cov_document_path), 404);
+
+        return Storage::disk('local')->response($policy->cov_document_path);
     }
 }
